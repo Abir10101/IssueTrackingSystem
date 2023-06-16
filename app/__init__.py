@@ -56,5 +56,3 @@ def configure_logging(app):
   # Add file handler object to the logger
   app.logger.addHandler(file_handler)
   app.logger.setLevel(logging.INFO)
-
-# from . import db

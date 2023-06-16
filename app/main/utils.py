@@ -1,5 +1,7 @@
 from flask import current_app
 from app import db
+from sqlalchemy.exc import IntegrityError
+
 
 
 # Global variables
@@ -17,25 +19,56 @@ def health_check():
     return
 
 
-# def add_ticket( user_id, ticket_number, ticket_description, ticket_status ):
-#     con = db_connection()
-#     cur = con.cursor()
-#     if ticket_status not in TICKET_STATUS_TUPLE:
-#         raise Exception("Invalid Status")
-#     try:
-#         cur.execute(
-#             "INSERT INTO tickets (user_id, t_code, t_description, t_status) VALUES ( %s, %s, %s, %s )",
-#             (user_id, ticket_number, ticket_description, ticket_status)
-#         )
-#         ticket_id = con.insert_id()
-#         con.commit()
-#     except pymysql.err.IntegrityError:
-#         con.rollback()
-#         raise Exception(f"Ticket {ticket_number} already exists")
-#     finally:
-#         cur.close()
-#         con.close()
-#     return ticket_id
+def add_ticket( user_id, ticket_number, ticket_description, ticket_status ):
+    from .models.ticket import Ticket
+
+    if ticket_status not in TICKET_STATUS_TUPLE:
+        raise Exception("Invalid Status")
+
+    try:
+        new_ticket = Ticket()
+        new_ticket.user_id = user_id
+        new_ticket.t_code = ticket_number
+        new_ticket.t_description = ticket_description
+
+        db.session.add( new_ticket )
+        db.session.commit()
+
+        ticket_id = new_ticket.id
+
+    except IntegrityError as err:
+        db.session.rollback()
+
+        exception_str = f"Ticket {ticket_number} already exists"
+        current_app.logger.info( exception_str )
+        raise Exception( exception_str )
+
+    except Exception as err:
+        db.session.rollback()
+        current_app.logger.info(f"Error add_ticket: {str(err)}")
+        raise Exception("Something went wrong! Contact support.")
+
+    return ticket_id
+
+    # con = db_connection()
+    # cur = con.cursor()
+    # if ticket_status not in TICKET_STATUS_TUPLE:
+    #     raise Exception("Invalid Status")
+    # try:
+    #     cur.execute(
+    #         "INSERT INTO tickets (user_id, t_code, t_description, t_status) VALUES ( %s, %s, %s, %s )",
+    #         (user_id, ticket_number, ticket_description, ticket_status)
+    #     )
+    #     ticket_id = con.insert_id()
+    #     con.commit()
+    # except pymysql.err.IntegrityError:
+    #     con.rollback()
+    #     raise Exception(f"Ticket {ticket_number} already exists")
+    # finally:
+    #     cur.close()
+    #     con.close()
+    # return ticket_id
+
 
 
 # def get_all_tickets( user_id ):
