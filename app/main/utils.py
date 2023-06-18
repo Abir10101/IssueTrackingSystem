@@ -50,26 +50,6 @@ def add_ticket( user_id, ticket_number, ticket_description, ticket_status ):
 
     return ticket_id
 
-    # con = db_connection()
-    # cur = con.cursor()
-    # if ticket_status not in TICKET_STATUS_TUPLE:
-    #     raise Exception("Invalid Status")
-    # try:
-    #     cur.execute(
-    #         "INSERT INTO tickets (user_id, t_code, t_description, t_status) VALUES ( %s, %s, %s, %s )",
-    #         (user_id, ticket_number, ticket_description, ticket_status)
-    #     )
-    #     ticket_id = con.insert_id()
-    #     con.commit()
-    # except pymysql.err.IntegrityError:
-    #     con.rollback()
-    #     raise Exception(f"Ticket {ticket_number} already exists")
-    # finally:
-    #     cur.close()
-    #     con.close()
-    # return ticket_id
-
-
 
 # def get_all_tickets( user_id ):
 #     con = db_connection()

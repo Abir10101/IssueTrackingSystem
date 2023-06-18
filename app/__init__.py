@@ -42,7 +42,7 @@ def configure_logging(app):
     os.mkdir('logs')
 
   # Create a file handler object
-  file_handler = RotatingFileHandler('logs/debug.log', maxBytes=10240, backupCount=20)
+  file_handler = RotatingFileHandler('logs/debug.log', maxBytes=625000, backupCount=20)
 
   # Set the logging level of the file handler object so that it logs INFO and up
   file_handler.setLevel(logging.INFO)
