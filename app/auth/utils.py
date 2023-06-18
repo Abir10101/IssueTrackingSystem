@@ -17,6 +17,7 @@ def health_check():
 
     return
 
+
 def encode_auth_token( username :int, secret :str ) -> str:
     expiry = datetime.datetime.utcnow() + datetime.timedelta( seconds=Config.TOKEN_VALIDITY )
     payload = {
@@ -32,6 +33,7 @@ def encode_auth_token( username :int, secret :str ) -> str:
         algorithm='HS256'
     )
 
+
 def decode_auth_token( token :str ) -> dict:
     try:
         payload = jwt.decode( token, app.secret_key, algorithms='HS256' )
@@ -44,6 +46,7 @@ def decode_auth_token( token :str ) -> dict:
         'secret': payload['secret'],
         'expiry': payload['expiry']
     }
+
 
 def register( username :str, password :str, name :str ) -> str:
     try:
@@ -63,6 +66,7 @@ def register( username :str, password :str, name :str ) -> str:
         raise Exception("Something went wrong! Contact support.")
 
     return token
+
 
 def login( username :str, password :str ) -> str:
     try:
