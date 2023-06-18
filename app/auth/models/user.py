@@ -13,6 +13,7 @@ class User(db.Model):
     status = db.Column(db.Enum('active', 'inactive'), default='active')
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
 
+
     def save(self):
         self.u_username = self.u_username.strip()
         self.u_password = self.u_password.strip()
@@ -42,9 +43,11 @@ class User(db.Model):
 
         return self
 
+
     @staticmethod
     def get_user_by_username(username):
         return User.query.filter_by( u_username = username, status = 'active').first()
+
 
     @staticmethod
     def check_password(password_input, password_against):

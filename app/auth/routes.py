@@ -6,7 +6,6 @@ from .utils import health_check, register, login
 # from app.decorators import token_required
 
 
-
 @auth_blueprint.route( '/health', methods=['GET'] )
 def _health():
     current_app.logger.info("auth Running")
