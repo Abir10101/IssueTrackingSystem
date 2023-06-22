@@ -1,6 +1,6 @@
 from flask import jsonify, request, current_app
 from . import auth_blueprint
-from .utils import health_check, register, login
+from .utils import health_check, register, login, logout
 
 # from app.utils import add_ticket, get_all_tickets, get_single_ticket, update_ticket, delete_ticket, add_branch, get_all_branches, update_branch, delete_branch, health_check
 # from app.decorators import token_required
@@ -38,12 +38,6 @@ def _resgister():
                 response = {
                     "isOk": False,
                     "status": 400,
-                    "message": f"{err}",
-                }
-            except Exception as err:
-                response = {
-                    "isOk": False,
-                    "status": 500,
                     "message": f"{err}",
                 }
             else:
@@ -94,12 +88,6 @@ def _login():
                     "status": 400,
                     "message": f"{err}",
                 }
-            except Exception as err:
-                response = {
-                    "isOk": False,
-                    "status": 500,
-                    "message": f"{err}",
-                }
             else:
                 response = {
                     "isOk": True,
@@ -112,3 +100,39 @@ def _login():
 
     return jsonify(response), response["status"]
 
+
+@auth_blueprint.route( '/logout', methods=['POST'] )
+def _logout():
+    if request.method == 'POST':
+        request_data = request.get_json()
+
+        if 'token' not in request_data:
+            response = {
+                "isOk": False,
+                "status": 400,
+                "message": "Invalid parameters passed"
+            }
+        elif len(request_data['token'].strip()) < 1:
+            response = {
+                "isOk": False,
+                "status": 400,
+                "message": "Token cannot be empty"
+            }
+        else:
+            token = request_data['token']
+            try:
+                logout( token )
+            except ValueError as err:
+                response = {
+                    "isOk": False,
+                    "status": 400,
+                    "message": f"{err}",
+                }
+            else:
+                response = {
+                    "isOk": True,
+                    "status": 200,
+                    "message": "User logout successfully"
+                }
+
+    return jsonify(response), response['status']

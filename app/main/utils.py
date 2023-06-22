@@ -1,12 +1,9 @@
 from flask import current_app
 from app import db
 from sqlalchemy.exc import IntegrityError
+from .models.ticket import Ticket
+from .models.branch import Branch
 
-
-
-# Global variables
-TICKET_STATUS_TUPLE = ('pending', 'ongoing', 'done')
-BRANCH_STATUS_TUPLE = ('live', 'not_live')
 
 # functions
 def health_check():
@@ -20,51 +17,18 @@ def health_check():
 
 
 def add_ticket( user_id, ticket_number, ticket_description, ticket_status ):
-    from .models.ticket import Ticket
+    new_ticket = Ticket()
+    new_ticket.user_id = user_id
+    new_ticket.t_code = ticket_number
+    new_ticket.t_description = ticket_description
+    new_ticket.t_status = ticket_status
+    ticket = new_ticket.save()
 
-    if ticket_status not in TICKET_STATUS_TUPLE:
-        raise Exception("Invalid Status")
-
-    try:
-        new_ticket = Ticket()
-        new_ticket.user_id = user_id
-        new_ticket.t_code = ticket_number
-        new_ticket.t_description = ticket_description
-
-        db.session.add( new_ticket )
-        db.session.commit()
-
-        ticket_id = new_ticket.id
-
-    except IntegrityError as err:
-        db.session.rollback()
-
-        exception_str = f"Ticket {ticket_number} already exists"
-        current_app.logger.info( exception_str )
-        raise Exception( exception_str )
-
-    except Exception as err:
-        db.session.rollback()
-        current_app.logger.info(f"Error add_ticket: {str(err)}")
-        raise Exception("Something went wrong! Contact support.")
-
-    return ticket_id
+    return ticket.id
 
 
 # def get_all_tickets( user_id ):
-#     con = db_connection()
-#     cur = con.cursor()
-#     try:
-#         cur.execute(
-#             "SELECT * FROM tickets WHERE user_id = %s;",
-#             (user_id)
-#         )
-#         tickets = cur.fetchall()
-#     except Exception as err:
-#         raise Exception(err)
-#     finally:
-#         cur.close()
-#         con.close()
+#     tickets = Ticket.get_user_tickets( user_id )
 #     return tickets
 
 
@@ -139,29 +103,14 @@ def add_ticket( user_id, ticket_number, ticket_description, ticket_status ):
 #     return True
 
 
-# def add_branch( user_id, ticket_id, branch_name, branch_status ):
-#     con = db_connection()
-#     cur = con.cursor()
-#     if branch_status not in BRANCH_STATUS_TUPLE:
-#         raise Exception("Invalid Status")
-#     try:
-#         is_user_ticket = check_user_ticket( con, ticket_id, user_id )
-#         if is_user_ticket:
-#             cur.execute(
-#                 "INSERT INTO branches (ticket_id, b_name, b_status) VALUES ( %s, %s, %s );",
-#                 (ticket_id, branch_name, branch_status,)
-#             )
-#             branch_id = con.insert_id()
-#             con.commit()
-#         else:
-#             raise Exception("Invalid ticket id")
-#     except pymysql.err.IntegrityError:
-#         con.rollback()
-#         raise Exception(f"Branch {branch_name} already exists")
-#     finally:
-#         cur.close()
-#         con.close()
-#     return branch_id
+def add_branch( user_id, ticket_id, name, status ):
+    new_branch = Branch()
+    new_branch.ticket_id = ticket_id
+    new_branch.b_name = name
+    new_branch.b_status = status
+    branch = new_branch.save(user_id)
+
+    return branch.id
 
 
 # def get_all_branches( user_id, ticket_id ):

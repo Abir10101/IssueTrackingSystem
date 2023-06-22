@@ -34,13 +34,8 @@ class User(db.Model):
         self.u_secret = secrets.token_urlsafe(10)
         self.u_password = _ws.generate_password_hash( self.u_password )
 
-        try:
-            db.session.add(self)
-            db.session.commit()
-        except Exception as err:
-            db.session.rollback()
-            raise Exception(f"{err}")
-
+        db.session.add(self)
+        db.session.commit()
         return self
 
 
@@ -52,6 +47,12 @@ class User(db.Model):
     @staticmethod
     def check_password(password_input, password_against):
         return _ws.check_password_hash( password_against, password_input )
+
+
+    def refresh_secret(self):
+        self.u_secret = secrets.token_urlsafe(10)
+        db.session.commit()
+        return True
 
 
     def __repr__(self):

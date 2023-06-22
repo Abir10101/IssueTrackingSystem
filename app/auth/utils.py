@@ -36,52 +36,67 @@ def encode_auth_token( username :int, secret :str ) -> str:
 
 def decode_auth_token( token :str ) -> dict:
     try:
-        payload = jwt.decode( token, app.secret_key, algorithms='HS256' )
+        payload = jwt.decode( token, current_app.secret_key, algorithms='HS256' )
+        return {
+            'username': payload['sub'],
+            'secret': payload['secret'],
+            'expiry': payload['expiry']
+        }
     except jwt.ExpiredSignatureError:
-        raise Exception('Token expired.')
+        raise ValueError('Token expired.')
     except jwt.InvalidTokenError:
-        raise Exception('Invalid token.')
-    return {
-        'username': payload['sub'],
-        'secret': payload['secret'],
-        'expiry': payload['expiry']
-    }
+        raise ValueError('Invalid token.')
 
 
 def register( username :str, password :str, name :str ) -> str:
-    try:
-        new_user = User()
-        new_user.u_username = username
-        new_user.u_password = password
-        new_user.u_name = name
-        user = new_user.save()
+    new_user = User()
+    new_user.u_username = username
+    new_user.u_password = password
+    new_user.u_name = name
+    user = new_user.save()
 
-        token = encode_auth_token( user.u_username, user.u_secret )
-
-    except ValueError as err:
-        raise ValueError( f"{err}" )
-
-    except Exception as err:
-        current_app.logger.info(f"Error user register: {str(err)}")
-        raise Exception("Something went wrong! Contact support.")
-
+    token = encode_auth_token( user.u_username, user.u_secret )
     return token
 
 
 def login( username :str, password :str ) -> str:
-    try:
-        user = User.get_user_by_username( username )
-
-    except Exception as err:
-        current_app.logger.info(f"Error user login: {str(err)}")
-        raise Exception("Something went wrong! Contact support.")
+    user = User.get_user_by_username( username )
 
     if user:
         if User.check_password( password, user.u_password ):
             token = encode_auth_token( user.u_username, user.u_secret )
+            return token
         else:
             raise ValueError("Invalid Password")
     else:
         raise ValueError("User does not exists")
 
-    return token
+
+def logout( token :str ) -> bool:
+    username = decode_auth_token( token )['username']
+    user = User.get_user_by_username( username )
+    status = user.refresh_secret()
+    return status
+
+
+def refresh_login_token( token: str ) -> dict:
+    decoded = decode_auth_token( token )
+    username = decoded['username']
+    token_secret = decoded['secret']
+    token_exp = datetime.datetime.fromtimestamp( int(decoded['expiry']) )
+
+    user = User.get_user_by_username( username )
+    user_secret = user.u_secret
+
+    if token_secret != user_secret:
+        raise ValueError("User not logged in.")
+
+    if (token_exp - datetime.datetime.utcnow()) < datetime.timedelta( seconds=Config.TOKEN_REFRESH_RATE ):
+        new_token = encode_auth_token( user_id, token_secret )
+        token = new_token
+
+    return {
+        "user_id": user.id,
+        "user_token": token
+    }
+

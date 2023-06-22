@@ -26,7 +26,7 @@ def upgrade():
     sa.Column('status', sa.Enum('active', 'inactive'), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('t_code')
+    sa.UniqueConstraint('t_code', name='uq_ticket_t_code')
     )
     # ### end Alembic commands ###
 

@@ -1,6 +1,7 @@
 from functools import wraps
 from flask import request
-import auth
+from app.auth.utils import refresh_login_token
+from flask import current_app
 
 
 def token_required(f):
@@ -8,26 +9,24 @@ def token_required(f):
     def decorated( *args, **kwargs ):
         try:
             token = request.headers['Authorization'].split(" ")[1]
-            details = auth.user.details( token )
+            details = refresh_login_token( token )
 
-            return f( details["user_id"], details["token"] )
+            return f( details["user_id"], details["user_token"] )
 
         except KeyError as err:
             response = {
                 "isOk": False,
-                "status": 500,
+                "status": 400,
                 "message": "Auth Token Required!"
             }
-
-            return response
-
-        except Exception as err:
+        
+        except ValueError as err:
             response = {
                 "isOk": False,
-                "status": 500,
+                "status": 400,
                 "message": f"{err}"
             }
 
-            return response
+        return response, response['status']
 
     return decorated
