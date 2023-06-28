@@ -11,8 +11,6 @@ def token_required(f):
             token = request.headers['Authorization'].split(" ")[1]
             details = refresh_login_token( token )
 
-            return f( details["user_id"], details["user_token"] )
-
         except KeyError as err:
             response = {
                 "isOk": False,
@@ -26,6 +24,9 @@ def token_required(f):
                 "status": 400,
                 "message": f"{err}"
             }
+
+        else:
+            return f( details["user_id"], details["user_token"], *args, **kwargs )
 
         return response, response['status']
 

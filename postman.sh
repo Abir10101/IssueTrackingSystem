@@ -24,14 +24,19 @@ curl -w "%{http_code}\n" --location --request POST 'http://localhost:5000/users/
 
 curl -w "%{http_code}\n" --location --request GET 'http://localhost:5000/tickets' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODcyMjMyNzQsImlhdCI6MTY4NzEzNjg3NCwic3ViIjoidGVzdDEiLCJzZWNyZXQiOiJ6R1pENVpjNVB2YUxKUSIsImV4cGlyeSI6IjE2ODcyMDM0NzQifQ.t2jmfJ_m4cBte-dPKPGpqcNc_nDxRzqYyG11zBN3zE8'
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODc5MTY0MDIsImlhdCI6MTY4NzgzMDAwMiwic3ViIjoidGVzdDEiLCJzZWNyZXQiOiJ6R1pENVpjNVB2YUxKUSIsImV4cGlyeSI6IjE2ODc4OTY2MDIifQ.3lvDEGf2pg04TDXfnmPF0hfq0gPOcyh2YHYkhwVVwyo'
+
+
+curl -w "%{http_code}\n" --location --request GET 'http://localhost:5000/ticket/6666' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODc3NDk5MDIsImlhdCI6MTY4NzY2MzUwMiwic3ViIjoidGVzdDEiLCJzZWNyZXQiOiJ6R1pENVpjNVB2YUxKUSIsImV4cGlyeSI6IjE2ODc3MzAxMDIifQ.E8bkdZcQBd2QZxkpQRdjKVjd0V28e0ZhVj5Aj174bWo'
 
 
 curl -w "%{http_code}\n" --location --request POST 'http://localhost:5000/tickets' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODc0ODExNTMsImlhdCI6MTY4NzM5NDc1Mywic3ViIjoidGVzdDEiLCJzZWNyZXQiOiJ6R1pENVpjNVB2YUxKUSIsImV4cGlyeSI6IjE2ODc0NjEzNTMifQ.fyipv9T5hnKyPvsp1-nBbAYmDu_Zs4KGldRmuxXRLNI' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODc3NDk5MDIsImlhdCI6MTY4NzY2MzUwMiwic3ViIjoidGVzdDEiLCJzZWNyZXQiOiJ6R1pENVpjNVB2YUxKUSIsImV4cGlyeSI6IjE2ODc3MzAxMDIifQ.E8bkdZcQBd2QZxkpQRdjKVjd0V28e0ZhVj5Aj174bWo' \
 --data-raw '{
-    "code":"vfd-9966",
+    "code":"9666",
     "description": "wqq",
     "status":"pending"
 }'
@@ -39,28 +44,54 @@ curl -w "%{http_code}\n" --location --request POST 'http://localhost:5000/ticket
 
 curl -w "%{http_code}\n" --location --request PATCH 'http://localhost:5000/tickets' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NjQ2ODQyODIsImlhdCI6MTY2NDU5Nzg4Miwic3ViIjozMywic2VjcmV0IjoiMXlCeXdHSE1LSW5jUVEiLCJleHBpcnkiOiIxNjY0NjY0NDgyIn0.1gaC5UypBJ2-8TszPfccy5GRSzqV3KKhPicMZMiw5-I' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODc3NDk5MDIsImlhdCI6MTY4NzY2MzUwMiwic3ViIjoidGVzdDEiLCJzZWNyZXQiOiJ6R1pENVpjNVB2YUxKUSIsImV4cGlyeSI6IjE2ODc3MzAxMDIifQ.E8bkdZcQBd2QZxkpQRdjKVjd0V28e0ZhVj5Aj174bWo' \
 --data-raw '{
-    "ticket_id": 25,
-    "code":"vfd-12334",
-    "description": "asdf",
-    "status":"done"
+    "ticket_code": 9666,
+    "new_code":"6666",
+    "new_description": "asdf",
+    "new_status":"done"
+}'
+
+
+curl -w "%{http_code}\n" --location --request DELETE 'http://localhost:5000/tickets' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODc5MTY0MDIsImlhdCI6MTY4NzgzMDAwMiwic3ViIjoidGVzdDEiLCJzZWNyZXQiOiJ6R1pENVpjNVB2YUxKUSIsImV4cGlyeSI6IjE2ODc4OTY2MDIifQ.3lvDEGf2pg04TDXfnmPF0hfq0gPOcyh2YHYkhwVVwyo' \
+--data-raw '{
+    "code":"6666"
 }'
 
 
 curl -w "%{http_code}\n" --location --request POST 'http://localhost:5000/branches' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODc0ODExNTMsImlhdCI6MTY4NzM5NDc1Mywic3ViIjoidGVzdDEiLCJzZWNyZXQiOiJ6R1pENVpjNVB2YUxKUSIsImV4cGlyeSI6IjE2ODc0NjEzNTMifQ.fyipv9T5hnKyPvsp1-nBbAYmDu_Zs4KGldRmuxXRLNI' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODc5MTY0MDIsImlhdCI6MTY4NzgzMDAwMiwic3ViIjoidGVzdDEiLCJzZWNyZXQiOiJ6R1pENVpjNVB2YUxKUSIsImV4cGlyeSI6IjE2ODc4OTY2MDIifQ.3lvDEGf2pg04TDXfnmPF0hfq0gPOcyh2YHYkhwVVwyo' \
 --data-raw '{
-    "ticket_id": 3,
-    "name":"b-1235",
+    "ticket_code": 9966,
+    "name":"b-1111",
     "status": "not_live"
 }'
 
 
 curl -w "%{http_code}\n" --location --request GET 'http://localhost:5000/branches' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NjQ2ODQyODIsImlhdCI6MTY2NDU5Nzg4Miwic3ViIjozMywic2VjcmV0IjoiMXlCeXdHSE1LSW5jUVEiLCJleHBpcnkiOiIxNjY0NjY0NDgyIn0.1gaC5UypBJ2-8TszPfccy5GRSzqV3KKhPicMZMiw5-I' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODc5MTY0MDIsImlhdCI6MTY4NzgzMDAwMiwic3ViIjoidGVzdDEiLCJzZWNyZXQiOiJ6R1pENVpjNVB2YUxKUSIsImV4cGlyeSI6IjE2ODc4OTY2MDIifQ.3lvDEGf2pg04TDXfnmPF0hfq0gPOcyh2YHYkhwVVwyo' \
 --data-raw '{
-    "ticket_id": 25
+    "ticket_code": 9966
+}'
+
+
+curl -w "%{http_code}\n" --location --request PATCH 'http://localhost:5000/branches' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODc5MTY0MDIsImlhdCI6MTY4NzgzMDAwMiwic3ViIjoidGVzdDEiLCJzZWNyZXQiOiJ6R1pENVpjNVB2YUxKUSIsImV4cGlyeSI6IjE2ODc4OTY2MDIifQ.3lvDEGf2pg04TDXfnmPF0hfq0gPOcyh2YHYkhwVVwyo' \
+--data-raw '{
+    "old_name":"b-1111",
+    "new_name":"b-1112",
+    "new_status": "live"
+}'
+
+
+curl -w "%{http_code}\n" --location --request DELETE 'http://localhost:5000/branches' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODc5MTY0MDIsImlhdCI6MTY4NzgzMDAwMiwic3ViIjoidGVzdDEiLCJzZWNyZXQiOiJ6R1pENVpjNVB2YUxKUSIsImV4cGlyeSI6IjE2ODc4OTY2MDIifQ.3lvDEGf2pg04TDXfnmPF0hfq0gPOcyh2YHYkhwVVwyo' \
+--data-raw '{
+    "branch_name":"b-1112"
 }'

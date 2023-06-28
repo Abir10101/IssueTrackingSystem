@@ -2,10 +2,8 @@ from flask import jsonify, request, current_app
 from . import main_blueprint
 
 # from app.utils import add_ticket, get_all_tickets, get_single_ticket, update_ticket, delete_ticket, add_branch, get_all_branches, update_branch, delete_branch, health_check
-from .utils import health_check, add_ticket, add_branch
+from .utils import health_check, add_ticket, add_branch, get_all_tickets, get_single_ticket, update_ticket, delete_ticket, get_all_branches, update_branch, delete_branch
 from .decorators import token_required
-
-# import auth
 
 
 @main_blueprint.route( '/health', methods=['GET'] )
@@ -53,100 +51,127 @@ def _tickets( user_id, token ):
                     }
                 }
 
-    # elif request.method == 'GET':
-    #     try:
-    #         tickets = get_all_tickets( user_id )
-    #     except ValueError as err:
-    #         response = {
-    #             "isOk": False,
-    #             "status": 400,
-    #             "message": f"{err}"
-    #         }
-    #     else:
-    #         if tickets:
-    #             tickets_dict = {}
-    #             for count, ticket in enumerate(tickets):
-    #                 tickets_dict[count] = {}
-    #                 tickets_dict[count]["id"] = ticket['id']
-    #                 tickets_dict[count]["code"] = ticket['t_code']
-    #                 tickets_dict[count]["description"] = ticket['t_description']
-    #                 tickets_dict[count]["status"] = ticket['t_status']
-    #             response = {
-    #                 "isOk": True,
-    #                 "status": 200,
-    #                 "message": "Tickets fetched successfully",
-    #                 "data": {
-    #                     "token": token,
-    #                     "tickets": tickets_dict
-    #                 }
-    #             }
-    #         else:
-    #             response = {
-    #                 "isOk": True,
-    #                 "status": 200,
-    #                 "message": "No tickets found",
-    #             }
-    # elif request.method == 'PATCH':
-    #     request_data = request.get_json()
-    #     if 'ticket_id' not in request_data or \
-    #         'code' not in request_data or \
-    #         'description' not in request_data or \
-    #         'status' not in request_data:
-    #         response = {
-    #             "isOk": False,
-    #             "status": 500,
-    #             "message": "Invalid parameters passed"
-    #         }
-    #     else:
-    #         ticket_id = request_data['ticket_id']
-    #         code = request_data['code']
-    #         description = request_data['description']
-    #         status = request_data['status']
-    #         try:
-    #             message = update_ticket( ticket_id, code, description, status )
-    #         except Exception as err:
-    #             response = {
-    #                 "isOk": False,
-    #                 "status": 500,
-    #                 "message": f"{err}"
-    #             }
-    #         else:
-    #             response = {
-    #                 "isOk": True,
-    #                 "status": 200,
-    #                 "message": "Ticket updated successfully",
-    #                 "data": {
-    #                     "token": token
-    #                 }
-    #             }
-    # elif request.method == 'DELETE':
-    #     request_data = request.get_json()
-    #     if 'ticket_id' not in request_data:
-    #         response = {
-    #             "isOk": False,
-    #             "status": 500,
-    #             "message": "Invalid parameters passed"
-    #         }
-    #     else:
-    #         ticket_id = request_data['ticket_id']
-    #         try:
-    #             message = delete_ticket( ticket_id )
-    #         except Exception as err:
-    #             response = {
-    #                 "isOk": False,
-    #                 "status": 500,
-    #                 "message": f"{err}",
-    #             }
-    #         else:
-    #             response = {
-    #                 "isOk": True,
-    #                 "status": 200,
-    #                 "message": "Ticket deleted successfully",
-    #                 "data": {
-    #                     "token": token
-    #                 }
-    #             }
-    
+    elif request.method == 'GET':
+        try:
+            tickets = get_all_tickets( user_id )
+        except ValueError as err:
+            response = {
+                "isOk": False,
+                "status": 400,
+                "message": f"{err}"
+            }
+        else:
+            if tickets:
+                response = {
+                    "isOk": True,
+                    "status": 200,
+                    "message": "Tickets fetched successfully",
+                    "data": {
+                        "token": token,
+                        "tickets": tickets
+                    }
+                }
+            else:
+                response = {
+                    "isOk": True,
+                    "status": 200,
+                    "message": "No tickets found",
+                }
+
+    elif request.method == 'PATCH':
+        request_data = request.get_json()
+
+        if 'ticket_code' not in request_data or \
+            'new_code' not in request_data or \
+            'new_description' not in request_data or \
+            'new_status' not in request_data:
+            response = {
+                "isOk": False,
+                "status": 500,
+                "message": "Invalid parameters passed"
+            }
+
+        else:
+            ticket_code = request_data['ticket_code']
+            new_code = request_data['new_code']
+            new_description = request_data['new_description']
+            new_status = request_data['new_status']
+
+            try:
+                status = update_ticket( ticket_code, user_id, new_code, new_description, new_status )
+            except ValueError as err:
+                response = {
+                    "isOk": False,
+                    "status": 400,
+                    "message": f"{err}"
+                }
+            else:
+                response = {
+                    "isOk": True,
+                    "status": 200,
+                    "message": "Ticket updated successfully",
+                    "data": {
+                        "token": token
+                    }
+                }
+
+    elif request.method == 'DELETE':
+        request_data = request.get_json()
+
+        if 'code' not in request_data:
+            response = {
+                "isOk": False,
+                "status": 400,
+                "message": "Invalid parameters passed"
+            }
+
+        else:
+            code = request_data['code']
+
+            try:
+                status = delete_ticket( code, user_id )
+            except ValueError as err:
+                response = {
+                    "isOk": False,
+                    "status": 400,
+                    "message": f"{err}",
+                }
+            else:
+                response = {
+                    "isOk": True,
+                    "status": 200,
+                    "message": "Ticket deleted successfully",
+                    "data": {
+                        "token": token
+                    }
+                }
+
+    return jsonify(response), response["status"]
+
+
+@main_blueprint.route( '/ticket/<int:ticket_id>', methods=['GET'] )
+@token_required
+def _ticket_single( user_id, token, ticket_id ):
+    if request.method == 'GET':
+        try:
+            ticket = get_single_ticket( ticket_id, user_id )
+        except ValueError as err:
+            response = {
+                "isOk": False,
+                "status": 400,
+                "message": f"{err}",
+            }
+        else:
+            response = {
+                "isOk": True,
+                "status": 200,
+                "message": "Ticket fetched successfully",
+                "data": {
+                    "token": token,
+                    "ticket": ticket
+                }
+            }
+
     return jsonify(response), response["status"]
 
 
@@ -155,7 +180,7 @@ def _tickets( user_id, token ):
 def _branches( user_id, token ):
     if request.method == 'POST':
         request_data = request.get_json()
-        if 'ticket_id' not in request_data or \
+        if 'ticket_code' not in request_data or \
             'name' not in request_data or \
             'status' not in request_data:
             response = {
@@ -164,12 +189,12 @@ def _branches( user_id, token ):
                     "message": "Invalid parameters passed"
                 }
         else:
-            ticket_id = request_data['ticket_id']
+            ticket_code = request_data['ticket_code']
             name = request_data['name']
             status = request_data['status']
 
             try:
-                branch_id = add_branch( user_id, ticket_id, name, status )
+                branch_id = add_branch( user_id, ticket_code, name, status )
             except ValueError as err:
                 response = {
                     "isOk": False,
@@ -187,107 +212,113 @@ def _branches( user_id, token ):
                     }
                 }
 
-    # elif request.method == 'GET':
-    #     request_data = request.get_json()
-    #     if 'ticket_id' not in request_data:
-    #         response = {
-    #                 "isOk": False,
-    #                 "status": 500,
-    #                 "message": "Invalid parameters passed",
-    #             }
-    #     else:
-    #         ticket_id = request_data['ticket_id']
-    #         try:
-    #             branches = get_all_branches( user_id, ticket_id )
-    #         except Exception as err:
-    #             response = {
-    #                 "isOk": False,
-    #                 "status": 500,
-    #                 "message": f"{err}",
-    #             }
-    #         else:
-    #             if branches:
-    #                 branches_dict = {}
-    #                 for count, branch in enumerate(branches):
-    #                     branches_dict[count] = {}
-    #                     branches_dict[count]["id"] = branch['id']
-    #                     branches_dict[count]["name"] = branch['b_name']
-    #                     branches_dict[count]["status"] = branch['b_status']
-    #                 response = {
-    #                     "isOk": True,
-    #                     "status": 200,
-    #                     "message": "Branches fetched successfully",
-    #                     "data": {
-    #                         "token": token,
-    #                         "branches": branches_dict
-    #                     }
-    #                 }
-    #             else:
-    #                 response = {
-    #                     "isOk": False,
-    #                     "status": 500,
-    #                     "message": "No Branches Found",
-    #                 }
+    elif request.method == 'GET':
+        request_data = request.get_json()
 
-    # elif request.method == 'PATCH':
-    #     request_data = request.get_json()
-    #     if 'branch_id' not in request_data or \
-    #         'name' not in request_data or \
-    #         'status' not in request_data:
-    #         response = {
-    #             "isOk": False,
-    #             "status": 500,
-    #             "message": "Invalid parameters passed"
-    #         }
-    #     else:
-    #         branch_id = request_data['branch_id']
-    #         name = request_data['name']
-    #         status = request_data['status']
-    #         try:
-    #             message = update_branch( branch_id, name, status )
-    #         except Exception as err:
-    #             response = {
-    #                 "isOk": False,
-    #                 "status": 500,
-    #                 "message": f"{err}"
-    #             }
-    #         else:
-    #             response = {
-    #                 "isOk": True,
-    #                 "status": 200,
-    #                 "message": "Branch updated successfully",
-    #                 "data": {
-    #                     "token": token
-    #                 }
-    #             }
+        if 'ticket_code' not in request_data:
+            response = {
+                    "isOk": False,
+                    "status": 400,
+                    "message": "Invalid parameters passed",
+                }
 
-    # elif request.method == "DELETE":
-    #     request_data = request.get_json()
-    #     if 'branch_id' not in request_data:
-    #         response = {
-    #             "isOk": False,
-    #             "status": 500,
-    #             "message": "Invalid parameters passed"
-    #         }
-    #     else:
-    #         branch_id = request_data['branch_id']
-    #         try:
-    #             message = delete_branch( branch_id )
-    #         except Exception as err:
-    #             response = {
-    #                 "isOk": False,
-    #                 "status": 500,
-    #                 "message": f"{err}",
-    #             }
-    #         else:
-    #             response = {
-    #                 "isOk": True,
-    #                 "status": 200,
-    #                 "message": "Branch deleted successfully",
-    #                 "data": {
-    #                     "token": token
-    #                 }
-    #             }
+        else:
+            ticket_code = request_data['ticket_code']
+
+            try:
+                branches = get_all_branches( user_id, ticket_code )
+            except ValueError as err:
+                response = {
+                    "isOk": False,
+                    "status": 400,
+                    "message": f"{err}",
+                }
+            else:
+                if branches:
+                    response = {
+                        "isOk": True,
+                        "status": 200,
+                        "message": "Branches fetched successfully",
+                        "data": {
+                            "token": token,
+                            "branches": branches
+                        }
+                    }
+                else:
+                    response = {
+                        "isOk": True,
+                        "status": 200,
+                        "message": "No branches found",
+                        "data": {
+                            "token": token,
+                        }
+                    }
+
+    elif request.method == 'PATCH':
+        request_data = request.get_json()
+
+        if 'old_name' not in request_data or \
+            'new_name' not in request_data or \
+            'new_status' not in request_data:
+            response = {
+                "isOk": False,
+                "status": 400,
+                "message": "Invalid parameters passed"
+            }
+
+        else:
+            old_name = request_data['old_name']
+            new_name = request_data['new_name']
+            new_status = request_data['new_status']
+
+            try:
+                message = update_branch( user_id, old_name, new_name, new_status )
+            except ValueError as err:
+                response = {
+                    "isOk": False,
+                    "status": 400,
+                    "message": f"{err}"
+                }
+            else:
+                response = {
+                    "isOk": True,
+                    "status": 200,
+                    "message": "Branch updated successfully",
+                    "data": {
+                        "token": token
+                    }
+                }
+
+    elif request.method == "DELETE":
+        request_data = request.get_json()
+
+        if 'branch_name' not in request_data:
+            response = {
+                "isOk": False,
+                "status": 400,
+                "message": "Invalid parameters passed"
+            }
+
+        else:
+            branch_name = request_data['branch_name']
+
+            try:
+                status = delete_branch( user_id, branch_name )
+            except ValueError as err:
+                response = {
+                    "isOk": False,
+                    "status": 400,
+                    "message": f"{err}",
+                }
+            else:
+                response = {
+                    "isOk": True,
+                    "status": 200,
+                    "message": "Branch deleted successfully",
+                    "data": {
+                        "token": token
+                    }
+                }
 
     return jsonify(response), response["status"]
 

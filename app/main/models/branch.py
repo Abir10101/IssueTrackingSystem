@@ -10,14 +10,14 @@ class BranchStatus(enum.Enum):
 
 class Branch(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    ticket_id = db.Column(db.Integer, db.ForeignKey('ticket.id'), nullable=False)
     b_name = db.Column(db.String(20))
     b_status = db.Column(db.Enum(BranchStatus), default=BranchStatus.not_live.value)
     status = db.Column(db.Enum('active', 'inactive'), default='active')
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
-    ticket_id = db.Column(db.Integer, db.ForeignKey('ticket.id'), nullable=False)
 
 
-    def save(self, user_id):
+    def validate(self):
         self.b_name = self.b_name.strip()
 
         if not self.b_name:
@@ -31,28 +31,30 @@ class Branch(db.Model):
             elif self.b_status not in BranchStatus.__members__:
                 raise ValueError("Invalid Branch status")
 
-        branch = self.get_branch_by_name( self.b_name, self.ticket_id )
+        branch = self.get_branch_by_name( self.b_name )
 
-        if branch:
-            raise ValueError(f"{self.b_name} already exists for this ticket.")
+        is_duplicate_branch = branch is not None and branch.ticket.id == self.ticket_id
 
-        is_user_ticket = Ticket.check_user_ticket( self.ticket_id, user_id )
+        if is_duplicate_branch:
+            raise ValueError(f"{self.b_name} already exists for this ticket")
 
-        if not is_user_ticket:
-            raise ValueError(f"Invalid Ticket id")
-
-        db.session.add(self)
-        db.session.commit()
         return self
 
 
     @staticmethod
-    def get_branch_by_name(branch_name, ticket_id):
-        return Branch.query.filter_by(ticket_id = ticket_id, b_name = branch_name, status = 'active').first()
+    def get_branch_by_name(branch_name):
+        with db.session.no_autoflush:
+            return Branch.query.filter_by(b_name = branch_name, status = 'active').first()
+
+
+    @staticmethod
+    def get_branches_by_ticket(ticket_id):
+        with db.session.no_autoflush:
+            return Branch.query.filter_by(ticket_id = ticket_id, status = 'active').order_by(Branch.created_at.desc()).all()
 
 
     def __repr__(self):
-        return f"<Branch {self.ticket_id}, {self.b_name}, {self.b_status}, {self.ticket_id}, {self.status}, {self.created_at}>"
+        return f"<Branch {self.ticket_id}, {self.b_name}, {self.b_status.value}, {self.ticket_id}, {self.status}, {self.created_at}>"
 
 
 from .ticket import Ticket
