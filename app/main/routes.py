@@ -1,7 +1,6 @@
 from flask import jsonify, request, current_app
 from . import main_blueprint
 
-# from app.utils import add_ticket, get_all_tickets, get_single_ticket, update_ticket, delete_ticket, add_branch, get_all_branches, update_branch, delete_branch, health_check
 from .utils import health_check, add_ticket, add_branch, get_all_tickets, get_single_ticket, update_ticket, delete_ticket, get_all_branches, update_branch, delete_branch
 from .decorators import token_required
 

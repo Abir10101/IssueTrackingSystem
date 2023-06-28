@@ -1,7 +1,7 @@
 curl -w "%{http_code}\n" --location --request POST 'http://localhost:5000/users/register' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "username":"test8",
+    "username":"test10",
     "password": "test1",
     "name":"test1"
 }'
@@ -10,7 +10,7 @@ curl -w "%{http_code}\n" --location --request POST 'http://localhost:5000/users/
 curl -w "%{http_code}\n" --location --request POST 'http://localhost:5000/users/login' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "username":"test1",
+    "username":"test10",
     "password": "test1"
 }'
 
@@ -18,13 +18,13 @@ curl -w "%{http_code}\n" --location --request POST 'http://localhost:5000/users/
 curl -w "%{http_code}\n" --location --request POST 'http://localhost:5000/users/logout' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODcyMjIwNDgsImlhdCI6MTY4NzEzNTY0OCwic3ViIjoidGVzdDEiLCJzZWNyZXQiOiJvaTVaQ2tSTnRTU2FMQSIsImV4cGlyeSI6IjE2ODcyMDIyNDgifQ.qpNmdAcQHD-kAxLLCpXwM5hRX5zBNpMHaUZDWTZ1tV8"
+    "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODgwMTQ3MzIsImlhdCI6MTY4NzkyODMzMiwic3ViIjoidGVzdDEwIiwic2VjcmV0IjoibUZtOHpRanIwT3MwRFEiLCJleHBpcnkiOiIxNjg3OTk0OTMyIn0.MwBw7F0un00mNda1RPZo05IKA8vaC-AuOQqZQ0KFF_Q"
 }'
 
 
 curl -w "%{http_code}\n" --location --request GET 'http://localhost:5000/tickets' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODc5MTY0MDIsImlhdCI6MTY4NzgzMDAwMiwic3ViIjoidGVzdDEiLCJzZWNyZXQiOiJ6R1pENVpjNVB2YUxKUSIsImV4cGlyeSI6IjE2ODc4OTY2MDIifQ.3lvDEGf2pg04TDXfnmPF0hfq0gPOcyh2YHYkhwVVwyo'
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODgwMTQ3MzIsImlhdCI6MTY4NzkyODMzMiwic3ViIjoidGVzdDEwIiwic2VjcmV0IjoibUZtOHpRanIwT3MwRFEiLCJleHBpcnkiOiIxNjg3OTk0OTMyIn0.MwBw7F0un00mNda1RPZo05IKA8vaC-AuOQqZQ0KFF_Q'
 
 
 curl -w "%{http_code}\n" --location --request GET 'http://localhost:5000/ticket/6666' \

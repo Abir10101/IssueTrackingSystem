@@ -5,6 +5,8 @@ import werkzeug.security as _ws
 from flask import current_app
 from .config import Config
 from .models.user import User
+from app import db
+from .exc import *
 
 
 # functions
@@ -51,11 +53,14 @@ def decode_auth_token( token :str ) -> dict:
 def register( username :str, password :str, name :str ) -> str:
     new_user = User()
     new_user.u_username = username
-    new_user.u_password = password
+    new_user.hash_password( password )
     new_user.u_name = name
-    user = new_user.save()
+    new_user.validate()
 
-    token = encode_auth_token( user.u_username, user.u_secret )
+    db.session.add(new_user)
+    db.session.commit()
+
+    token = encode_auth_token( new_user.u_username, new_user.u_secret )
     return token
 
 
@@ -67,14 +72,18 @@ def login( username :str, password :str ) -> str:
             token = encode_auth_token( user.u_username, user.u_secret )
             return token
         else:
-            raise ValueError("Invalid Password")
+            raise ValidationError("Invalid Password")
     else:
-        raise ValueError("User does not exists")
+        raise NotFoundError("User does not exists")
 
 
 def logout( token :str ) -> bool:
     username = decode_auth_token( token )['username']
     user = User.get_user_by_username( username )
+
+    if not user:
+        raise NotFoundError("User does not exists")
+
     status = user.refresh_secret()
     return status
 

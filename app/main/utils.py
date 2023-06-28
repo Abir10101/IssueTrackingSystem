@@ -30,6 +30,7 @@ def add_ticket( user_id, ticket_number, ticket_description, ticket_status ):
 
 
 def get_all_tickets( user_id ):
+    current_app.logger.info(user_id)
     tickets = Ticket.get_user_tickets( user_id )
 
     tickets_dict = {}
