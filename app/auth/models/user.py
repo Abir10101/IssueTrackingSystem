@@ -2,7 +2,6 @@ import secrets
 import werkzeug.security as _ws
 from app import db
 from flask import current_app
-from app.auth.exc import *
 
 
 class User(db.Model):
@@ -21,16 +20,16 @@ class User(db.Model):
         self.u_name = self.u_name.strip()
 
         if not self.u_username:
-            raise ValidationError(f"username is required")
+            raise ValueError("InvalidUsername")
         if not self.u_password:
-            raise ValidationError(f"password is required")
+            raise ValueError("InvalidPassword")
         if not self.u_name:
-            raise ValidationError(f"name is required")
+            raise ValueError("InvalidName")
 
         user = self.get_user_by_username( self.u_username )
 
         if user:
-            raise DuplicationError(f"{self.u_username} already exists")
+            raise ValueError("UserExists")
 
         is_password_hashed = self.u_password.endswith("$HASHED$")
         if not is_password_hashed:

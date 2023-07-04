@@ -1,9 +1,7 @@
 from flask import jsonify, request, current_app
 from . import auth_blueprint
 from .utils import health_check, register, login, logout
-
-# from app.utils import add_ticket, get_all_tickets, get_single_ticket, update_ticket, delete_ticket, add_branch, get_all_branches, update_branch, delete_branch, health_check
-# from app.decorators import token_required
+from .exc import *
 
 
 @auth_blueprint.route( '/health', methods=['GET'] )
@@ -34,11 +32,11 @@ def _resgister():
 
             try:
                 token = register( username, password, name )
-            except ValueError as err:
+            except (ValidationError, DuplicationError) as err:
                 response = {
                     "isOk": False,
                     "status": 400,
-                    "message": f"{err}",
+                    "message":  f"{err}",
                 }
             else:
                 response = {
@@ -82,7 +80,7 @@ def _login():
 
             try:
                 token = login( username, password )
-            except ValueError as err:
+            except (ValidationError, NotFoundError) as err:
                 response = {
                     "isOk": False,
                     "status": 400,
@@ -122,7 +120,7 @@ def _logout():
             token = request_data['token']
             try:
                 logout( token )
-            except ValueError as err:
+            except NotFoundError as err:
                 response = {
                     "isOk": False,
                     "status": 400,

@@ -6,3 +6,9 @@ class ValidationError(Exception):
 
 class DuplicationError(Exception):
     pass
+
+class UnauthorizationError(Exception):
+    pass
+
+class TokenError(Exception):
+    pass
