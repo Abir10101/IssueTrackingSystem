@@ -34,9 +34,9 @@ curl -w "%{http_code}\n" --location --request GET 'http://localhost:5000/ticket/
 
 curl -w "%{http_code}\n" --location --request POST 'http://localhost:5000/tickets' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODc3NDk5MDIsImlhdCI6MTY4NzY2MzUwMiwic3ViIjoidGVzdDEiLCJzZWNyZXQiOiJ6R1pENVpjNVB2YUxKUSIsImV4cGlyeSI6IjE2ODc3MzAxMDIifQ.E8bkdZcQBd2QZxkpQRdjKVjd0V28e0ZhVj5Aj174bWo' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODg1Mjc0NzYsImlhdCI6MTY4ODQ0MTA3Niwic3ViIjoidGVzdDEwIiwic2VjcmV0IjoiUFVyZmVyLU4tbEk1d1EiLCJleHBpcnkiOiIxNjg4NTA3Njc2In0.WszCc63OY4I8NJCN0dS3jwSkspgaGOE8fTUapJEOdzo' \
 --data-raw '{
-    "code":"9666",
+    "code":"6666",
     "description": "wqq",
     "status":"pending"
 }'
