@@ -2,6 +2,7 @@ from flask import current_app
 from app import db
 from .models.ticket import Ticket
 from .models.branch import Branch
+from .exc import *
 
 
 # functions
@@ -16,17 +17,28 @@ def health_check():
 
 
 def add_ticket( user_id, ticket_number, ticket_description, ticket_status ):
-    new_ticket = Ticket()
-    new_ticket.user_id = user_id
-    new_ticket.t_code = ticket_number
-    new_ticket.t_description = ticket_description
-    new_ticket.t_status = ticket_status
-    new_ticket.validate()
+    try:
+        new_ticket = Ticket()
+        new_ticket.user_id = user_id
+        new_ticket.t_code = ticket_number
+        new_ticket.t_description = ticket_description
+        new_ticket.t_status = ticket_status
+        new_ticket.validate()
+    except ValueError as err:
+        err = f"{err}"
+        if err == "InvalidCode":
+            raise ValidationError(f"Invalid Ticket Code")
+        elif err == "InvalidDescription":
+            raise ValidationError(f"Invalid Ticket Description")
+        elif err == "InvalidStatus":
+            raise ValidationError(f"Invalid Ticket Status")
+        elif err == "DuplicateCode":
+            raise DuplicationError(f"{ticket_number} already exists")
 
     db.session.add(new_ticket)
     db.session.commit()
 
-    return ticket.id
+    return new_ticket.id
 
 
 def get_all_tickets( user_id ):

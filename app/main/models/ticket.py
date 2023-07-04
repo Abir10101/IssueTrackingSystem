@@ -25,9 +25,9 @@ class Ticket(db.Model):
         self.t_description = self.t_description.strip()
 
         if not self.t_code:
-            raise ValueError(f"Ticket code is required.")
+            raise ValueError(f"InvalidCode")
         if not self.t_description:
-            raise ValueError(f"Ticket description is required")
+            raise ValueError(f"InvalidDescription")
 
         if self.t_status:
             self.t_status = self.t_status.strip()
@@ -35,17 +35,17 @@ class Ticket(db.Model):
             if not self.t_status:
                 self.t_status = None
             elif self.t_status not in TicketStatus.__members__:
-                raise ValueError("Invalid ticket status")
+                raise ValueError("InvalidStatus")
 
         try:
             self.t_code = int(self.t_code)
         except ValueError:
-            raise ValueError(f"Invalid Ticket code")
+            raise ValueError(f"InvalidCode")
 
         ticket = self.get_ticket_by_code(self.t_code)
 
         if ticket:
-            raise ValueError(f"{self.t_code} already exists")
+            raise ValueError("DuplicateCode")
 
         return self
 

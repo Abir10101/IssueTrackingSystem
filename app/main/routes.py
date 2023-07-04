@@ -3,6 +3,7 @@ from . import main_blueprint
 
 from .utils import health_check, add_ticket, add_branch, get_all_tickets, get_single_ticket, update_ticket, delete_ticket, get_all_branches, update_branch, delete_branch
 from .decorators import token_required
+from .exc import *
 
 
 @main_blueprint.route( '/health', methods=['GET'] )
@@ -34,7 +35,7 @@ def _tickets( user_id, token ):
 
             try:
                 ticket_id = add_ticket( user_id, code, description, status )
-            except ValueError as err:
+            except (ValidationError, DuplicationError) as err:
                 response = {
                     "isOk": False,
                     "status": 400,

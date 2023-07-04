@@ -93,7 +93,7 @@ def logout( token :str ) -> bool:
     user = User.get_user_by_username( username )
 
     if not user:
-        raise NotFoundError("InvalidUser")
+        raise NotFoundError("Invalid user")
 
     status = user.refresh_secret()
     return status
@@ -109,7 +109,7 @@ def refresh_login_token( token: str ) -> dict:
     user_secret = user.u_secret
 
     if token_secret != user_secret:
-        raise UnauthorizationError("UnauthorizedUser")
+        raise UnauthorizationError("Invalid user")
 
     if (token_exp - datetime.datetime.utcnow()) < datetime.timedelta( seconds=Config.TOKEN_REFRESH_RATE ):
         new_token = encode_auth_token( user_id, token_secret )
