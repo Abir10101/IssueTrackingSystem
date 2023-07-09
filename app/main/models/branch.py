@@ -21,7 +21,7 @@ class Branch(db.Model):
         self.b_name = self.b_name.strip()
 
         if not self.b_name:
-            raise ValueError(f"Branch name is required.")
+            raise ValueError(f"InvalidName")
 
         if self.b_status:
             self.b_status = self.b_status.strip()
@@ -29,14 +29,14 @@ class Branch(db.Model):
             if not self.b_status:
                 self.b_status = None
             elif self.b_status not in BranchStatus.__members__:
-                raise ValueError("Invalid Branch status")
+                raise ValueError("InvalidStatus")
 
         branch = self.get_branch_by_name( self.b_name )
 
         is_duplicate_branch = branch is not None and branch.ticket.id == self.ticket_id
 
         if is_duplicate_branch:
-            raise ValueError(f"{self.b_name} already exists for this ticket")
+            raise ValueError("DuplicateBranch")
 
         return self
 

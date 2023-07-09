@@ -52,31 +52,24 @@ def _tickets( user_id, token ):
                 }
 
     elif request.method == 'GET':
-        try:
-            tickets = get_all_tickets( user_id )
-        except ValueError as err:
+        tickets = get_all_tickets( user_id )
+
+        if tickets:
             response = {
-                "isOk": False,
-                "status": 400,
-                "message": f"{err}"
+                "isOk": True,
+                "status": 200,
+                "message": "Tickets fetched successfully",
+                "data": {
+                    "token": token,
+                    "tickets": tickets
+                }
             }
         else:
-            if tickets:
-                response = {
-                    "isOk": True,
-                    "status": 200,
-                    "message": "Tickets fetched successfully",
-                    "data": {
-                        "token": token,
-                        "tickets": tickets
-                    }
-                }
-            else:
-                response = {
-                    "isOk": True,
-                    "status": 200,
-                    "message": "No tickets found",
-                }
+            response = {
+                "isOk": True,
+                "status": 200,
+                "message": "No tickets found",
+            }
 
     elif request.method == 'PATCH':
         request_data = request.get_json()
@@ -99,7 +92,7 @@ def _tickets( user_id, token ):
 
             try:
                 status = update_ticket( ticket_code, user_id, new_code, new_description, new_status )
-            except ValueError as err:
+            except (ValidationError, DuplicationError) as err:
                 response = {
                     "isOk": False,
                     "status": 400,
@@ -130,7 +123,7 @@ def _tickets( user_id, token ):
 
             try:
                 status = delete_ticket( code, user_id )
-            except ValueError as err:
+            except ValidationError as err:
                 response = {
                     "isOk": False,
                     "status": 400,
@@ -155,7 +148,7 @@ def _ticket_single( user_id, token, ticket_id ):
     if request.method == 'GET':
         try:
             ticket = get_single_ticket( ticket_id, user_id )
-        except ValueError as err:
+        except ValidationError as err:
             response = {
                 "isOk": False,
                 "status": 400,
@@ -195,7 +188,7 @@ def _branches( user_id, token ):
 
             try:
                 branch_id = add_branch( user_id, ticket_code, name, status )
-            except ValueError as err:
+            except (ValidationError, DuplicationError) as err:
                 response = {
                     "isOk": False,
                     "status": 500,
@@ -227,7 +220,7 @@ def _branches( user_id, token ):
 
             try:
                 branches = get_all_branches( user_id, ticket_code )
-            except ValueError as err:
+            except ValidationError as err:
                 response = {
                     "isOk": False,
                     "status": 400,
@@ -273,7 +266,7 @@ def _branches( user_id, token ):
 
             try:
                 message = update_branch( user_id, old_name, new_name, new_status )
-            except ValueError as err:
+            except (ValidationError, DuplicationError) as err:
                 response = {
                     "isOk": False,
                     "status": 400,
@@ -304,7 +297,7 @@ def _branches( user_id, token ):
 
             try:
                 status = delete_branch( user_id, branch_name )
-            except ValueError as err:
+            except ValidationError as err:
                 response = {
                     "isOk": False,
                     "status": 400,

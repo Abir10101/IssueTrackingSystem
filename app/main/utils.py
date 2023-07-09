@@ -42,7 +42,6 @@ def add_ticket( user_id, ticket_number, ticket_description, ticket_status ):
 
 
 def get_all_tickets( user_id ):
-    current_app.logger.info(user_id)
     tickets = Ticket.get_user_tickets( user_id )
 
     tickets_dict = {}
@@ -69,7 +68,7 @@ def get_single_ticket( ticket_code, user_id ):
     ticket = Ticket.get_ticket_by_code(ticket_code)
 
     if ticket is None or ticket.user_id != user_id:
-        raise ValueError(f"Invalid ticket.")
+        raise ValidationError("Invalid ticket")
 
     ticket_dict = {}
     if ticket:
@@ -85,12 +84,23 @@ def update_ticket( old_code, user_id, new_code, new_description, new_status ):
     ticket = Ticket.get_ticket_by_code(old_code)
 
     if ticket is None or ticket.user_id != user_id:
-        raise ValueError(f"Invalid Ticket")
+        raise ValidationError("Invalid ticket")
 
-    ticket.t_code = new_code
-    ticket.t_description = new_description
-    ticket.t_status = new_status
-    ticket.validate()
+    try:
+        ticket.t_code = new_code
+        ticket.t_description = new_description
+        ticket.t_status = new_status
+        ticket.validate()
+    except ValueError as err:
+        err = f"{err}"
+        if err == "InvalidCode":
+            raise ValidationError(f"Invalid Ticket Code")
+        elif err == "InvalidDescription":
+            raise ValidationError(f"Invalid Ticket Description")
+        elif err == "InvalidStatus":
+            raise ValidationError(f"Invalid Ticket Status")
+        elif err == "DuplicateCode":
+            raise DuplicationError(f"{ticket_number} already exists")
 
     db.session.commit()
 
@@ -101,7 +111,7 @@ def delete_ticket( code, user_id ):
     ticket = Ticket.get_ticket_by_code(code)
 
     if ticket is None or ticket.user_id != user_id:
-        raise ValueError(f"Invalid Ticket")
+        raise ValidationError("Invalid ticket")
 
     ticket.status = "inactive"
 
@@ -117,13 +127,22 @@ def add_branch( user_id, ticket_code, name, status ):
     ticket = Ticket.get_ticket_by_code(ticket_code)
 
     if ticket is None or ticket.user_id != user_id:
-        raise ValueError(f"Invalid Ticket.")
+        raise ValidationError("Invalid ticket")
 
-    new_branch = Branch()
-    new_branch.ticket_id = ticket.id
-    new_branch.b_name = name
-    new_branch.b_status = status
-    new_branch.validate()
+    try:
+        new_branch = Branch()
+        new_branch.ticket_id = ticket.id
+        new_branch.b_name = name
+        new_branch.b_status = status
+        new_branch.validate()
+    except ValueError as err:
+        err = f"{err}"
+        if err == "InvalidName":
+            raise ValidationError(f"Invalid branch name")
+        elif err == "InvalidStatus":
+            raise ValidationError(f"Invalid branch status")
+        elif err == "DuplicateBranch":
+            raise DuplicationError(f"{name} already exists for this ticket")
 
     db.session.add(new_branch)
     db.session.commit()
@@ -135,7 +154,7 @@ def get_all_branches( user_id, ticket_code ):
     ticket = Ticket.get_ticket_by_code(ticket_code)
 
     if ticket is None or ticket.user_id != user_id:
-        raise ValueError(f"Invalid Ticket.")
+        raise ValidationError("Invalid ticket")
 
     branches = Branch.get_branches_by_ticket( ticket.id )
 
@@ -154,13 +173,22 @@ def get_all_branches( user_id, ticket_code ):
 def update_branch( user_id, old_name, new_name, new_status ):
     branch = Branch.get_branch_by_name( old_name )
 
-    is_valid_branch = branch is not None and branch.ticket.user_id == user_id
+    is_valid_branch = branch is None or branch.ticket.user_id == user_id
     if not is_valid_branch:
-        raise ValueError(f"Invalid Branch.")
+        raise ValidationError("Invalid branch")
 
-    branch.b_name = new_name
-    branch.b_status = new_status
-    branch.validate()
+    try:
+        branch.b_name = new_name
+        branch.b_status = new_status
+        branch.validate()
+    except ValueError as err:
+        err = f"{err}"
+        if err == "InvalidName":
+            raise ValidationError(f"Invalid branch name")
+        elif err == "InvalidStatus":
+            raise ValidationError(f"Invalid branch status")
+        elif err == "DuplicateBranch":
+            raise DuplicationError(f"{name} already exists for this ticket")
 
     db.session.commit()
 
@@ -170,10 +198,10 @@ def update_branch( user_id, old_name, new_name, new_status ):
 def delete_branch( user_id, name ):
     branch = Branch.get_branch_by_name( name )
 
-    is_valid_branch = branch is not None and branch.ticket.user_id == user_id
+    is_valid_branch = branch is None or branch.ticket.user_id == user_id
 
     if not is_valid_branch:
-        raise ValueError(f"Invalid Branch.")
+        raise ValidationError("Invalid branch")
 
     branch.status = "inactive"
 
