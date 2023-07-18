@@ -12,10 +12,16 @@ services:
       - dbdata:/var/lib/mysql
     networks:
       - ticketsApp
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
   api:
     build:
       context: ..
       dockerfile: docker/Dockerfile
+    image: ticketsapp
     container_name: flaskApp
     ports:
       - '5000:5000'
@@ -30,6 +36,15 @@ services:
       - DB_PASSWORD=admin
       - DB_NAME=myapp
       - SECRET_KEY="secret_key"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      test: ["CMD-SHELL", "curl -f http://localhost:5000/users/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 networks:
   ticketsApp:
 volumes:
