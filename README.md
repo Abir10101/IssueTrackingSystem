@@ -1,4 +1,4 @@
-# Sensor Monitoring System
+# Issue Tracking System
 
 API based web application designed to streamline ticket management, making it the ideal solution for Issue Tracking Systems. This application is built with simplicity and flexibility in mind, using Flask as the core framework and MySQL as the database.
 
