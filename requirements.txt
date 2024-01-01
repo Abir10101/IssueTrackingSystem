@@ -6,3 +6,4 @@ cryptography>=38.0.4
 Flask-SQLAlchemy==3.0.5
 Flask-Migrate>=4.0.4
 mysql-connector-python==8.0.33
+redis[hiredis]==5.0.1

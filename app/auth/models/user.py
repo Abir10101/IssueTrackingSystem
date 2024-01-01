@@ -1,12 +1,14 @@
 import secrets
 import werkzeug.security as _ws
+import re
 from app import db
 from flask import current_app
+import json
 
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    u_username = db.Column(db.String(50), unique=True, nullable=False)
+    u_email = db.Column(db.String(50), unique=True, nullable=False)
     u_password = db.Column(db.String(200), nullable=False)
     u_name = db.Column(db.String(50), nullable=False)
     u_secret = db.Column(db.String(15))
@@ -15,18 +17,18 @@ class User(db.Model):
 
 
     def validate(self):
-        self.u_username = self.u_username.strip()
+        self.u_email = self.u_email.strip()
         self.u_password = self.u_password.strip()
         self.u_name = self.u_name.strip()
 
-        if not self.u_username:
-            raise ValueError("InvalidUsername")
+        if not self.u_email or not self.__is_valid_email():
+            raise ValueError("InvalidEmail")
         if not self.u_password:
             raise ValueError("InvalidPassword")
         if not self.u_name:
             raise ValueError("InvalidName")
 
-        user = self.get_user_by_username( self.u_username )
+        user = self.get_user_by_username( self.u_email )
 
         if user:
             raise ValueError("UserExists")
@@ -46,7 +48,7 @@ class User(db.Model):
 
     @staticmethod
     def get_user_by_username(username):
-        return User.query.filter_by( u_username = username, status = 'active').first()
+        return User.query.filter_by( u_email = username, status = 'active').first()
 
 
     @staticmethod
@@ -60,6 +62,16 @@ class User(db.Model):
         db.session.commit()
         return True
 
+    def __is_valid_email(self):
+        regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
+        return re.fullmatch(regex, self.u_email)
+
+    def to_json(self):
+        return json.dumps({
+            "email": self.u_email,
+            "name": self.u_name,
+        })
+
 
     def __repr__(self):
-        return f"<User {self.u_username}, {self.u_password}, {self.u_name}, {self.status}, {self.created_at}>"
+        return f"<User {self.u_email}, {self.u_password}, {self.u_name}, {self.status}, {self.created_at}>"

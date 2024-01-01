@@ -1,7 +1,7 @@
 curl -w "%{http_code}\n" --location --request POST 'http://localhost:5000/users/register' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "username":"test10",
+    "email":"abir95@gmail.com",
     "password": "test1",
     "name":"test1"
 }'
@@ -10,7 +10,7 @@ curl -w "%{http_code}\n" --location --request POST 'http://localhost:5000/users/
 curl -w "%{http_code}\n" --location --request POST 'http://localhost:5000/users/login' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "username":"test10",
+    "email":"test10",
     "password": "test1"
 }'
 

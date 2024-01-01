@@ -16,7 +16,7 @@ def _resgister():
     if request.method == 'POST':
         request_data = request.get_json()
 
-        if not request_data.get('username') or \
+        if not request_data.get('email') or \
             not request_data.get('password') or \
             not request_data.get('name'):
             response = {
@@ -26,12 +26,12 @@ def _resgister():
             }
 
         else:
-            username = request_data.get('username')
+            email = request_data.get('email')
             password = request_data.get('password')
             name = request_data.get('name')
 
             try:
-                token = register( username, password, name )
+                token = register( email, password, name )
             except (ValidationError, DuplicationError) as err:
                 response = {
                     "isOk": False,
@@ -55,18 +55,18 @@ def _resgister():
 def _login():
     if request.method == 'POST':
         request_data = request.get_json()
-        if 'username' not in request_data or \
+        if 'email' not in request_data or \
            'password' not in request_data:
             response = {
                 "isOk": False,
                 "status": 400,
                 "message": "Invalid parameters passed"
             }
-        elif len(request_data['username'].strip()) < 1:
+        elif len(request_data['email'].strip()) < 1:
             response = {
                 "isOk": False,
                 "status": 400,
-                "message": "Username is required"
+                "message": "email is required"
             }
         elif len(request_data['password'].strip()) < 1:
             response = {
@@ -75,11 +75,11 @@ def _login():
                 "message": "Password is required"
             }
         else:
-            username = request_data['username'].strip()
+            email = request_data['email'].strip()
             password = request_data['password'].strip()
 
             try:
-                token = login( username, password )
+                token = login( email, password )
             except (ValidationError, NotFoundError) as err:
                 response = {
                     "isOk": False,

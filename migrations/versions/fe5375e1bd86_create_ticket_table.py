@@ -30,14 +30,14 @@ def upgrade():
     )
     op.create_table('user',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('u_username', sa.String(length=50), nullable=False),
+    sa.Column('u_email', sa.String(length=50), nullable=False),
     sa.Column('u_password', sa.String(length=200), nullable=False),
     sa.Column('u_name', sa.String(length=50), nullable=False),
     sa.Column('u_secret', sa.String(length=15), nullable=True),
     sa.Column('status', sa.Enum('active', 'inactive'), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('u_username')
+    sa.UniqueConstraint('u_email')
     )
     op.create_table('branch',
     sa.Column('id', sa.Integer(), nullable=False),
