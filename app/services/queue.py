@@ -18,8 +18,5 @@ class Queue:
             decode_responses=True
         )
 
-    def produce_message(self, queue :str, message :str):
-        return self.r_write.rpush(queue, message)
-
-    def consume_message(self, message :str):
-        return self.r_read.execute_command(message)
+    def push_message(self, channel :str, message :str):
+        return self.r_write.publish(channel, message)

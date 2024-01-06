@@ -73,7 +73,7 @@ def register( email :str, password :str, name :str ) -> str:
     # db.session.commit()
 
     queue = Queue()
-    queue.produce_message("UserRegistered", new_user.to_json())
+    queue.push_message("UserRegistered", new_user.to_json())
 
     token = encode_auth_token( new_user.u_email, new_user.u_secret )
     return token
