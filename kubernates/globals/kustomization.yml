@@ -1,0 +1,3 @@
+resources:
+  - fast-sc.yml
+  - docker-registry-secret.yml

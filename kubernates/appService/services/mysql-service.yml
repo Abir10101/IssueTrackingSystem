@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+  labels:
+    service: app
+spec:
+  selector:
+    service: app
+    app: mysql
+  clusterIP: None   # Headless Service
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306

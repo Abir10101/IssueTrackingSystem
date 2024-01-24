@@ -1,0 +1,6 @@
+kubernates/
+docker/
+logs/
+__pycache__/
+env/
+instance/

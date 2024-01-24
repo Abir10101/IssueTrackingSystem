@@ -1,0 +1,111 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ticketsapp-deployment
+  labels:
+    service: app
+    app: ticketsapp
+spec:
+  selector:
+    matchLabels:
+      service: app
+      app: ticketsapp
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        service: app
+        app: ticketsapp
+    spec:
+      initContainers:
+        - name: init-db
+          image: busybox
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: DB_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-configmap
+                  key: db_url
+          command: ['sh', '-c', "until nslookup $(DB_URL).$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for database; sleep 2; done"]
+      containers:
+        - name: ticketsapp
+          image: abir10101/tickets-app:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          env:
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: mysql-root-username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: mysql-root-password
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-configmap
+                  key: db_name
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-configmap
+                  key: db_url
+            - name: QUEUE_MASTER_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: redis-config
+                  key: master_url
+            - name: QUEUE_MASTER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: redis-config
+                  key: port
+            - name: QUEUE_MASTER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secret
+                  key: password
+            - name: QUEUE_SLAVE_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: redis-config
+                  key: slave_url
+            - name: QUEUE_SLAVE_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: redis-config
+                  key: port
+            - name: QUEUE_SLAVE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secret
+                  key: password
+            - name: SECRET_KEY
+              value: "secret"
+          livenessProbe:
+            tcpSocket:
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+      imagePullSecrets:
+        - name: docker-registry-secret

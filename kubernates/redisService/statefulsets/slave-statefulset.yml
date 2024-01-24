@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis-slave-statefulset
+  labels:
+    service: redis
+    redis: slave
+spec:
+  selector:
+    matchLabels:
+      service: redis
+      redis: slave
+  replicas: 2
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      partition: 0
+  template:
+    metadata:
+      labels:
+        service: redis
+        redis: slave
+    spec:
+      initContainers:
+        - name: init-master
+          image: busybox
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: MASTER_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: redis-config
+                  key: master_url
+          command: ['sh', '-c', "until nslookup $(MASTER_URL).default.svc.cluster.local; do echo waiting for master server; sleep 2; done"]
+      containers:
+        - name: redis-server-slave
+          image: redis:alpine3.19
+          imagePullPolicy: IfNotPresent
+          command:
+            - "sh"
+            - "-c"
+            - |
+              redis-server /conf/redis.conf \
+              --masterauth $PASSWORD \
+              --replicaof $MASTER_URL.default.svc.cluster.local $MASTER_PORT \
+              --requirepass $PASSWORD
+          ports:
+            - containerPort: 6379
+          env:
+            - name: MASTER_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: redis-config
+                  key: master_url
+            - name: MASTER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: redis-config
+                  key: port
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secret
+                  key: password
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+            - name: config-volume
+              mountPath: /conf
+      volumes:
+      - name: config-volume
+        configMap:
+          name: redis-config
+          items:
+            - key: redis.conf
+              path: redis.conf
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: fast
+        resources:
+          requests:
+            storage: 120Mi

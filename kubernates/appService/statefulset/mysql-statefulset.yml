@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql-statefulset
+  labels:
+    service: app
+    app: mysql
+spec:
+  serviceName: mysql-service
+  selector:
+    matchLabels:
+      service: app
+      app: mysql
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        service: app
+        app: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.0.31
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: mysql-root-password
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-configmap
+                  key: db_name
+          volumeMounts:
+            - name: mysql-claim
+              mountPath: /var/lib/mysql
+          resources:
+            requests:
+              memory: "450Mi"
+              cpu: "50m"
+  volumeClaimTemplates:
+    - metadata:
+        name: mysql-claim
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: fast
+        resources:
+          requests:
+            storage: 500Mi

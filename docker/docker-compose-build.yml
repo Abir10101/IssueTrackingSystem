@@ -21,7 +21,7 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    image: ticketsapp
+    image: tickets-app
     container_name: flaskApp
     ports:
       - '5000:5000'

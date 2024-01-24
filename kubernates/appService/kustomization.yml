@@ -1,0 +1,7 @@
+resources:
+  - secrets/mysql-secret.yml
+  - configmaps/mysql-configmap.yml
+  - services/mysql-service.yml
+  - statefulset/mysql-statefulset.yml
+  - deployments/ticketsapp-deployment.yml
+  - services/ticketsapp-service.yml

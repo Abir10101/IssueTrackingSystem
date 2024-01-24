@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis-master-statefulset
+  labels:
+    service: redis
+    redis: master
+spec:
+  selector:
+    matchLabels:
+      service: redis
+      redis: master
+  serviceName: redis-master-service
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      partition: 0
+  template:
+    metadata:
+      labels:
+        service: redis
+        redis: master
+    spec:
+      containers:
+        - name: redis-server-master
+          image: redis:alpine3.19
+          imagePullPolicy: IfNotPresent
+          command:
+            - "sh"
+            - "-c"
+            - |
+              redis-server /conf/redis.conf \
+              --requirepass $PASSWORD \
+              --replicaof no one
+          ports:
+            - containerPort: 6379
+          env:
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: redis-secret
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+            - name: config-volume
+              mountPath: /conf
+      volumes:
+      - name: config-volume
+        configMap:
+          name: redis-config
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: fast
+        resources:
+          requests:
+            storage: 120Mi

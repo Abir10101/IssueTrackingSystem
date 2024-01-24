@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-configmap
+  labels:
+    service: app
+data:
+  db_name: "ticketsdb"
+  db_url: "mysql-service"
+  db_port: "3306"

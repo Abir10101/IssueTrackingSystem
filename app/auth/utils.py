@@ -69,8 +69,8 @@ def register( email :str, password :str, name :str ) -> str:
         elif err == "UserExists":
             raise DuplicationError("User already exists")
 
-    # db.session.add(new_user)
-    # db.session.commit()
+    db.session.add(new_user)
+    db.session.commit()
 
     queue = Queue()
     queue.push_message("UserRegistered", new_user.to_json())

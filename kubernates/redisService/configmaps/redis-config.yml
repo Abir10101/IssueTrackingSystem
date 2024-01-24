@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-config
+  labels:
+    service: redis
+data:
+  master_url: "redis-master-service"
+  slave_url: "redis-slave-service"
+  port: "6379"
+  redis.conf: |-
+
+    save 60 1
+    loglevel warning
+    bind 0.0.0.0
+    protected-mode no
