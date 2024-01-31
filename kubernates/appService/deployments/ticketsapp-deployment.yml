@@ -32,13 +32,17 @@ spec:
                 configMapKeyRef:
                   name: mysql-configmap
                   key: db_url
-          command: ['sh', '-c', "until nslookup $(DB_URL).$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for database; sleep 2; done"]
+          command: ['sh', '-c', "until nslookup $(DB_URL); do echo waiting for database; sleep 2; done"]
       containers:
         - name: ticketsapp
           image: abir10101/tickets-app:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
+          lifecycle:
+            postStart:
+              exec:
+                command: ['sh', '-c', "flask db upgrade"]
           env:
             - name: DB_USER
               valueFrom:
@@ -69,7 +73,7 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: redis-config
-                  key: port
+                  key: master_port
             - name: QUEUE_MASTER_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -84,7 +88,7 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: redis-config
-                  key: port
+                  key: slave_port
             - name: QUEUE_SLAVE_PASSWORD
               valueFrom:
                 secretKeyRef:

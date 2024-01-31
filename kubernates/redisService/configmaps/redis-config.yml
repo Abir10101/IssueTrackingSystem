@@ -5,9 +5,10 @@ metadata:
   labels:
     service: redis
 data:
-  master_url: "redis-master-service"
-  slave_url: "redis-slave-service"
-  port: "6379"
+  master_url: "redis-master-service.default.svc.cluster.local"
+  slave_url: "redis-slave-service.default.svc.cluster.local"
+  master_port: "6379"
+  slave_port: "6378"
   redis.conf: |-
 
     save 60 1

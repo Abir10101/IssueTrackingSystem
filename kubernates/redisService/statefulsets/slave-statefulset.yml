@@ -31,7 +31,7 @@ spec:
                 configMapKeyRef:
                   name: redis-config
                   key: master_url
-          command: ['sh', '-c', "until nslookup $(MASTER_URL).default.svc.cluster.local; do echo waiting for master server; sleep 2; done"]
+          command: ['sh', '-c', "until nslookup $(MASTER_URL); do echo waiting for master server; sleep 2; done"]
       containers:
         - name: redis-server-slave
           image: redis:alpine3.19
@@ -42,7 +42,7 @@ spec:
             - |
               redis-server /conf/redis.conf \
               --masterauth $PASSWORD \
-              --replicaof $MASTER_URL.default.svc.cluster.local $MASTER_PORT \
+              --replicaof $MASTER_URL $MASTER_PORT \
               --requirepass $PASSWORD
           ports:
             - containerPort: 6379
@@ -56,7 +56,7 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: redis-config
-                  key: port
+                  key: master_port
             - name: PASSWORD
               valueFrom:
                 secretKeyRef:

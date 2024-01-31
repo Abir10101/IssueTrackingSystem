@@ -6,5 +6,5 @@ metadata:
     service: app
 data:
   db_name: "ticketsdb"
-  db_url: "mysql-service"
+  db_url: "mysql-service.default.svc.cluster.local"
   db_port: "3306"
