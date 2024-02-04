@@ -1,16 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ticketsapp-deployment
+  name: emailapp-deployment
   labels:
-    service: app
-    app: ticketsapp
+    service: email
 spec:
   selector:
     matchLabels:
-      service: app
-      app: ticketsapp
-  replicas: 2
+      service: email
+  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -19,51 +17,34 @@ spec:
   template:
     metadata:
       labels:
-        service: app
-        app: ticketsapp
+        service: email
     spec:
       initContainers:
-        - name: init-db
+        - name: init-queue
           image: busybox
           imagePullPolicy: IfNotPresent
           env:
-            - name: DB_URL
+            - name: QUEUE_HOST
               valueFrom:
                 configMapKeyRef:
-                  name: mysql-configmap
-                  key: db_url
-          command: ['sh', '-c', "until nslookup $(DB_URL); do echo waiting for database; sleep 2; done"]
+                  name: redis-config
+                  key: slave_url
+          command: ['sh', '-c', "until nslookup $(QUEUE_HOST); do echo waiting for master server; sleep 2; done"]
       containers:
-        - name: ticketsapp
-          image: abir10101/tickets-app:latest
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 5000
-          lifecycle:
-            postStart:
-              exec:
-                command: ['sh', '-c', "flask db upgrade"]
+        - name: emailapp
+          image: abir10101/email-app:latest
+          imagePullPolicy: IfNotPresent
           env:
-            - name: DB_USER
+            - name: SENDER_EMAIL_NAME
               valueFrom:
                 secretKeyRef:
-                  name: mysql-secret
-                  key: mysql-root-username
-            - name: DB_PASSWORD
+                  name: email-secret
+                  key: email
+            - name: SENDER_EMAIL_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: mysql-secret
-                  key: mysql-root-password
-            - name: DB_NAME
-              valueFrom:
-                configMapKeyRef:
-                  name: mysql-configmap
-                  key: db_name
-            - name: DB_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: mysql-configmap
-                  key: db_url
+                  name: email-secret
+                  key: email_password
             - name: QUEUE_MASTER_HOST
               valueFrom:
                 configMapKeyRef:
@@ -94,25 +75,12 @@ spec:
                 secretKeyRef:
                   name: redis-secret
                   key: password
-            - name: SECRET_KEY
-              value: "secret"
-          livenessProbe:
-            tcpSocket:
-              port: 5000
-            initialDelaySeconds: 10
-            periodSeconds: 15
-          readinessProbe:
-            httpGet:
-              path: /health
-              port: 5000
-            initialDelaySeconds: 5
-            periodSeconds: 5
           resources:
             requests:
-              cpu: "150m"
-              memory: "100Mi"
+              cpu: "100m"
+              memory: "50Mi"
             limits:
               cpu: "300m"
-              memory: "200Mi"
+              memory: "100Mi"
       imagePullSecrets:
         - name: docker-registry-secret

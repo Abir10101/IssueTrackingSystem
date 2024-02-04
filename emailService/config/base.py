@@ -11,5 +11,5 @@ class BaseConfig:
     QUEUE_SLAVE_PASSWORD = os.getenv("QUEUE_SLAVE_PASSWORD", default = "abir101")
 
     # Email
-    SENDER_EMAIL_NAME = os.getenv("SENDER_EMAIL_NAME", default = "abirmoulick998@gmail.com")
-    SENDER_EMAIL_PASSWORD = os.getenv("SENDER_EMAIL_PASSWORD", default = "zduz zqrm rsbo gwet")
+    SENDER_EMAIL_NAME = os.getenv("SENDER_EMAIL_NAME", default = "asdf@gmail.com")
+    SENDER_EMAIL_PASSWORD = os.getenv("SENDER_EMAIL_PASSWORD", default = "asdf")

@@ -1,7 +1,7 @@
 curl -w "%{http_code}\n" --location --request POST 'http://localhost:5000/users/register' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "email":"abirmoulick998@gmail.com",
+    "email":"abirmoulick.vawsum@gmail.com",
     "password": "test1",
     "name":"test1"
 }'

@@ -19,4 +19,8 @@ class Queue:
         )
 
     def push_message(self, channel :str, message :str):
-        return self.r_write.publish(channel, message)
+        try:
+            return self.r_write.publish(channel, message)
+        except redis.exceptions.ConnectionError as err:
+            # current_app.logger.info(err)
+            return False

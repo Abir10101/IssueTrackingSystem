@@ -1,3 +1,4 @@
 resources:
   - fast-sc.yml
   - docker-registry-secret.yml
+  - metrics-api.yml

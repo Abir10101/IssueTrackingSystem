@@ -1,4 +1,5 @@
 resources:
   # - globals/
-  - appService/
   - redisService/
+  - appService/
+  - emailService/
