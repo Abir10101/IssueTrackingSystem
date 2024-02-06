@@ -1,4 +1,5 @@
 resources:
-  - autoscalers/email-hpa.yml
   - deployments/email-deployment.yml
   - secrets/email-secret.yml
+  # - autoscalers/email-hpa.yml
+  - autoscalers/email-vpa.yml

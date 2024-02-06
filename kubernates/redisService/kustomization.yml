@@ -5,3 +5,5 @@ resources:
   - statefulsets/master-statefulset.yml
   - services/slave-svc.yml
   - statefulsets/slave-statefulset.yml
+  - autoscalers/slave-vpa.yml
+  # - autoscalers/slave-hpa.yml

@@ -10,7 +10,7 @@ spec:
     matchLabels:
       service: redis
       redis: slave
-  replicas: 2
+  replicas: 1
   updateStrategy:
     type: RollingUpdate
     rollingUpdate:
