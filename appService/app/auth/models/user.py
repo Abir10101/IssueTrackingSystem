@@ -28,7 +28,7 @@ class User(db.Model):
         if not self.u_name:
             raise ValueError("InvalidName")
 
-        user = self.get_user_by_username( self.u_email )
+        user = self.get_user_by_email( self.u_email )
 
         if user:
             raise ValueError("UserExists")

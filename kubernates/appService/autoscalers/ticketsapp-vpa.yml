@@ -1,0 +1,13 @@
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: ticketsapp-vpa
+  labels:
+    service: app
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ticketsapp-deployment
+  updatePolicy:
+    updateMode: "Off"
