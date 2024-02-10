@@ -10,7 +10,7 @@ spec:
     matchLabels:
       service: app
       app: ticketsapp
-  replicas: 2
+  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -109,10 +109,10 @@ spec:
             periodSeconds: 5
           resources:
             requests:
-              cpu: "150m"
-              memory: "100Mi"
+              cpu: "63m"
+              memory: "256Ki"
             limits:
-              cpu: "300m"
-              memory: "200Mi"
+              cpu: "1654m"
+              memory: "900Mi"
       imagePullSecrets:
         - name: docker-registry-secret

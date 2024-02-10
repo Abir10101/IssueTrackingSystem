@@ -5,5 +5,6 @@ resources:
   - statefulset/mysql-statefulset.yml
   - deployments/ticketsapp-deployment.yml
   - services/ticketsapp-service.yml
-  # - autoscalers/ticketsapp-hpa.yml
+  - autoscalers/ticketsapp-hpa.yml
   - autoscalers/ticketsapp-vpa.yml
+  - autoscalers/mysql-vpa.yml

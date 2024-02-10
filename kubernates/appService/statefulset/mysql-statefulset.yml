@@ -40,8 +40,11 @@ spec:
               mountPath: /var/lib/mysql
           resources:
             requests:
-              memory: "450Mi"
-              cpu: "50m"
+              cpu: "25m"
+              memory: "454Mi"
+            limits:
+              cpu: "478m"
+              memory: "454Mi"
   volumeClaimTemplates:
     - metadata:
         name: mysql-claim

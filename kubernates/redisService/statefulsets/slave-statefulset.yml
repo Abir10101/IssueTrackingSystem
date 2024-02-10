@@ -67,6 +67,13 @@ spec:
               mountPath: /data
             - name: config-volume
               mountPath: /conf
+          resources:
+            requests:
+              cpu: "410m"
+              memory: "256Ki"
+            limits:
+              cpu: "12243m"
+              memory: "250Mi"
       volumes:
       - name: config-volume
         configMap:

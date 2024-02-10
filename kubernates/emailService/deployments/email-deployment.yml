@@ -77,10 +77,10 @@ spec:
                   key: password
           resources:
             requests:
-              cpu: "100m"
-              memory: "50Mi"
+              cpu: "25m"
+              memory: "256Ki"
             limits:
-              cpu: "300m"
-              memory: "100Mi"
+              cpu: "575m"
+              memory: "800Mi"
       imagePullSecrets:
         - name: docker-registry-secret

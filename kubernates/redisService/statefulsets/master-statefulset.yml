@@ -41,6 +41,13 @@ spec:
                 secretKeyRef:
                   key: password
                   name: redis-secret
+          resources:
+            requests:
+              cpu: "25m"
+              memory: "256Ki"
+            limits:
+              cpu: "1168m"
+              memory: "684Mi"
           volumeMounts:
             - name: redis-data
               mountPath: /data

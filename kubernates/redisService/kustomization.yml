@@ -3,7 +3,8 @@ resources:
   - configmaps/redis-config.yml
   - services/master-svc.yml
   - statefulsets/master-statefulset.yml
+  - autoscalers/master-vpa.yml
   - services/slave-svc.yml
   - statefulsets/slave-statefulset.yml
   - autoscalers/slave-vpa.yml
-  # - autoscalers/slave-hpa.yml
+  - autoscalers/slave-hpa.yml
