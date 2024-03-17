@@ -60,7 +60,7 @@ class User(db.Model):
     def refresh_secret(self):
         self.u_secret = secrets.token_urlsafe(10)
         db.session.commit()
-        return True
+        return self.u_secret
 
     def __is_valid_email(self):
         regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'

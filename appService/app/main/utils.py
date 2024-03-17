@@ -11,12 +11,12 @@ def health_check():
 
     query = text("SELECT 1;")
     with db.engine.connect() as connection:
-        result = connection.execute( query )
+        result = connection.execute(query)
 
     return
 
 
-def add_ticket( user_id, ticket_number, ticket_description, ticket_status ):
+def add_ticket(user_id, ticket_number, ticket_description, ticket_status):
     try:
         new_ticket = Ticket()
         new_ticket.user_id = user_id
@@ -41,8 +41,8 @@ def add_ticket( user_id, ticket_number, ticket_description, ticket_status ):
     return new_ticket.id
 
 
-def get_all_tickets( user_id ):
-    tickets = Ticket.get_user_tickets( user_id )
+def get_all_tickets(user_id):
+    tickets = Ticket.get_user_tickets(user_id)
 
     tickets_dict = {}
 
@@ -64,7 +64,7 @@ def get_all_tickets( user_id ):
     return tickets_dict
 
 
-def get_single_ticket( ticket_code, user_id ):
+def get_single_ticket(ticket_code, user_id):
     ticket = Ticket.get_ticket_by_code(ticket_code)
 
     if ticket is None or ticket.user_id != user_id:
@@ -80,7 +80,7 @@ def get_single_ticket( ticket_code, user_id ):
     return ticket_dict
 
 
-def update_ticket( old_code, user_id, new_code, new_description, new_status ):
+def update_ticket(old_code, user_id, new_code, new_description, new_status):
     ticket = Ticket.get_ticket_by_code(old_code)
 
     if ticket is None or ticket.user_id != user_id:
@@ -107,7 +107,7 @@ def update_ticket( old_code, user_id, new_code, new_description, new_status ):
     return True
 
 
-def delete_ticket( code, user_id ):
+def delete_ticket(code, user_id):
     ticket = Ticket.get_ticket_by_code(code)
 
     if ticket is None or ticket.user_id != user_id:
@@ -123,7 +123,7 @@ def delete_ticket( code, user_id ):
     return True
 
 
-def add_branch( user_id, ticket_code, name, status ):
+def add_branch(user_id, ticket_code, name, status):
     ticket = Ticket.get_ticket_by_code(ticket_code)
 
     if ticket is None or ticket.user_id != user_id:
@@ -150,36 +150,33 @@ def add_branch( user_id, ticket_code, name, status ):
     return new_branch.id
 
 
-def get_all_branches( user_id, ticket_code ):
+def get_all_branches(user_id, ticket_code):
     ticket = Ticket.get_ticket_by_code(ticket_code)
 
     if ticket is None or ticket.user_id != user_id:
         raise ValidationError("Invalid ticket")
 
-    branches = Branch.get_branches_by_ticket( ticket.id )
+    branches = Branch.get_branches_by_ticket(ticket.id)
 
     branches_dict = {}
 
     if branches:
         for count, branch in enumerate(branches):
             branches_dict[count] = {}
-            branches_dict[count]["id"] = branch.id
             branches_dict[count]["name"] = branch.b_name
             branches_dict[count]["status"] = branch.b_status.value
 
     return branches_dict
 
 
-def update_branch( user_id, old_name, new_name, new_status ):
-    branch = Branch.get_branch_by_name( old_name )
-
-    is_valid_branch = branch is None or branch.ticket.user_id == user_id
-    if not is_valid_branch:
-        raise ValidationError("Invalid branch")
+def update_branch(user_id, old_name, new_name="", new_status=""):
+    branch = Branch.get_branch_by_name(old_name)
 
     try:
-        branch.b_name = new_name
-        branch.b_status = new_status
+        if new_name.strip() != "":
+            branch.b_name = new_name
+        if new_status.strip() != "":
+            branch.b_status = new_status
         branch.validate()
     except ValueError as err:
         err = f"{err}"
@@ -188,15 +185,14 @@ def update_branch( user_id, old_name, new_name, new_status ):
         elif err == "InvalidStatus":
             raise ValidationError(f"Invalid branch status")
         elif err == "DuplicateBranch":
-            raise DuplicationError(f"{name} already exists for this ticket")
+            raise DuplicationError(f"{new_name} already exists for this ticket")
 
     db.session.commit()
+    return branch
 
-    return True
 
-
-def delete_branch( user_id, name ):
-    branch = Branch.get_branch_by_name( name )
+def delete_branch(user_id, name):
+    branch = Branch.get_branch_by_name(name)
 
     is_valid_branch = branch is None or branch.ticket.user_id == user_id
 
@@ -204,7 +200,6 @@ def delete_branch( user_id, name ):
         raise ValidationError("Invalid branch")
 
     branch.status = "inactive"
-
     db.session.commit()
 
     return True

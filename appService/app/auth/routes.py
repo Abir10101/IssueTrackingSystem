@@ -31,7 +31,7 @@ def _resgister():
             name = request_data.get('name')
 
             try:
-                token = register( email, password, name )
+                register( email, password, name )
             except (ValidationError, DuplicationError) as err:
                 response = {
                     "isOk": False,
@@ -43,9 +43,6 @@ def _resgister():
                     "isOk": True,
                     "status": 200,
                     "message": "User added successfully",
-                    "data": {
-                        "token": token,
-                    }
                 }
 
     return jsonify(response), response["status"]
@@ -120,7 +117,7 @@ def _logout():
             token = request_data['token']
             try:
                 logout( token )
-            except NotFoundError as err:
+            except (NotFoundError, TokenError, UnauthorizationError) as err:
                 response = {
                     "isOk": False,
                     "status": 400,

@@ -75,8 +75,7 @@ def register( email :str, password :str, name :str ) -> str:
     queue = Queue()
     queue.push_message("UserRegistered", new_user.to_json())
 
-    token = encode_auth_token( new_user.u_email, new_user.u_secret )
-    return token
+    return
 
 
 def login( email :str, password :str ) -> str:
@@ -93,14 +92,14 @@ def login( email :str, password :str ) -> str:
 
 
 def logout( token :str ) -> bool:
-    email = decode_auth_token( token )['email']
-    user = User.get_user_by_email( email )
+    decoded_token = decode_auth_token( token )
+    user = User.get_user_by_email( decoded_token["email"] )
 
-    if not user:
-        raise NotFoundError("Invalid user")
+    if not user or decoded_token["secret"] != user.u_secret:
+        raise UnauthorizationError("Invalid user")
 
-    status = user.refresh_secret()
-    return status
+    user.refresh_secret()
+    return True
 
 
 def refresh_login_token( token: str ) -> dict:
@@ -110,13 +109,13 @@ def refresh_login_token( token: str ) -> dict:
     token_exp = datetime.datetime.fromtimestamp( int(decoded['expiry']) )
 
     user = User.get_user_by_email( email )
-    user_secret = user.u_secret
 
-    if token_secret != user_secret:
+    if not user or token_secret != user.u_secret:
         raise UnauthorizationError("Invalid user")
 
     if (token_exp - datetime.datetime.utcnow()) < datetime.timedelta( seconds=BaseConfig.AUTH_TOKEN_REFRESH_RATE ):
-        new_token = encode_auth_token( user_id, token_secret )
+        new_secret = user.refresh_secret()
+        new_token = encode_auth_token( email, new_secret )
         token = new_token
 
     return {

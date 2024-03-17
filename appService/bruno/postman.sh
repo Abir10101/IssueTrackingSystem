@@ -73,9 +73,9 @@ curl -w "%{http_code}\n" --location --request POST 'http://localhost:5000/branch
 
 curl -w "%{http_code}\n" --location --request GET 'http://localhost:5000/branches' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODc5MTY0MDIsImlhdCI6MTY4NzgzMDAwMiwic3ViIjoidGVzdDEiLCJzZWNyZXQiOiJ6R1pENVpjNVB2YUxKUSIsImV4cGlyeSI6IjE2ODc4OTY2MDIifQ.3lvDEGf2pg04TDXfnmPF0hfq0gPOcyh2YHYkhwVVwyo' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDc3MzQ2MTksImlhdCI6MTcwNzY0ODIxOSwic3ViIjoiYWJpcm1vdWxpY2s5OTk5OEBnbWFpbC5jb20iLCJzZWNyZXQiOiJlWl9QdHMzNjE0eVB0ZyIsImV4cGlyeSI6IjE3MDc3MTQ4MTkifQ._DGjgO3W6n-akQDbFYHAwevQDPIyIifBePwqcEVJmYI' \
 --data-raw '{
-    "ticket_code": 9966
+    "ticket_code": 6666
 }'
 
 

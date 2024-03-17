@@ -1,0 +1,21 @@
+meta {
+  name: logout
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/users/logout
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTAzNTA3NDAsImlhdCI6MTcxMDI2NDM0MCwic3ViIjoiYWJpcm1vdWxpY2s5OThAZ21haWwuY29tIiwic2VjcmV0IjoiaTFZMzBUWTBVcjB1ZWciLCJleHBpcnkiOiIxNzEwMzMwOTQwIn0.-vbHKVPcch1lMdsgYF_W-_CvPIfhRLqUdvXBEkeJApU"
+  }
+}

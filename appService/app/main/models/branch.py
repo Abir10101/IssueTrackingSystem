@@ -19,26 +19,24 @@ class Branch(db.Model):
 
     def validate(self):
         self.b_name = self.b_name.strip()
+        self.b_status = self.b_status.strip()
 
         if not self.b_name:
             raise ValueError(f"InvalidName")
 
-        if self.b_status:
-            self.b_status = self.b_status.strip()
+        if self.b_status and self.b_status not in BranchStatus.__members__:
+            raise ValueError("InvalidStatus")
 
-            if not self.b_status:
-                self.b_status = None
-            elif self.b_status not in BranchStatus.__members__:
-                raise ValueError("InvalidStatus")
-
-        branch = self.get_branch_by_name( self.b_name )
-
-        is_duplicate_branch = branch is not None and branch.ticket.id == self.ticket_id
-
-        if is_duplicate_branch:
+        if self.is_duplicate():
             raise ValueError("DuplicateBranch")
 
         return self
+
+
+    def is_duplicate(self):
+        with db.session.no_autoflush:
+            branch = Branch.query.filter_by(b_name = self.b_name, status = 'active').first()
+            return branch is not None and branch.ticket.id == self.ticket_id and branch.id != self.id
 
 
     @staticmethod
