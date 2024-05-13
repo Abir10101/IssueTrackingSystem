@@ -1,10 +1,11 @@
 import redis
-from app.config import app_config
+from app.config import AppConfig
 from flask import current_app
 
 class Queue:
 
     def __init__(self):
+        app_config = AppConfig().get()
         self.r_write = redis.StrictRedis(
             host=app_config.QUEUE_MASTER_HOST,
             port=app_config.QUEUE_MASTER_PORT,

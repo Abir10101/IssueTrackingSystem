@@ -2,13 +2,15 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from .config import AppConfig
 
 
 db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_object('app.config.app_config')
+    config = AppConfig(os.getenv('FLASK_ENV')).get()
+    app.config.from_object(config)
 
     db.init_app(app)
     migrate = Migrate(app, db)
