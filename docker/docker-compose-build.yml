@@ -19,7 +19,7 @@ services:
       retries: 3
   api:
     build:
-      context: ..
+      context: ../appService/
       dockerfile: docker/Dockerfile
     image: tickets-app
     container_name: flaskApp
@@ -28,7 +28,8 @@ services:
     networks:
       - ticketsApp
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       - FLASK_ENV=prod
       - DB_HOST=db

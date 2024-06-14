@@ -24,7 +24,7 @@ def tickets(user_id, token):
             "status" not in request_data:
             response = {
                 "isOk": False,
-                "status": 500,
+                "status": 400,
                 "message": "Invalid Parameters passed"
             }
 

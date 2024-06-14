@@ -1,0 +1,16 @@
+meta {
+  name: getTickets
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/tickets
+  body: none
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTU2NzA3NzIsImlhdCI6MTcxNTU4NDM3Miwic3ViIjoiYWJpcm1vdWxpY2s5OThAZ21haWwuY29tIiwic2VjcmV0Ijoiek9OMl9TbHcxMjFpc3ciLCJleHBpcnkiOiIxNzE1NjUwOTcyIn0.z6e5gMNCsD_xCnGl4J8Nzbx2IypNzT_dQPFyEuQbriM
+}

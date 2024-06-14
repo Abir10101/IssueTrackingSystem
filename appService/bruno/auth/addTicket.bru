@@ -1,0 +1,20 @@
+meta {
+  name: addTicket
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://localhost:5000/tickets
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODg1Mjc0NzYsImlhdCI6MTY4ODQ0MTA3Niwic3ViIjoidGVzdDEwIiwic2VjcmV0IjoiUFVyZmVyLU4tbEk1d1EiLCJleHBpcnkiOiIxNjg4NTA3Njc2In0.WszCc63OY4I8NJCN0dS3jwSkspgaGOE8fTUapJEOdzo
+}
+
+body:json {
+  { "code":"6666", "description": "wqq", "status":"pending" }
+}
