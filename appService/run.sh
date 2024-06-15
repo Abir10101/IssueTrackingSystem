@@ -1,4 +1,4 @@
 #!/bin/sh
 
-flask db upgrade
+flask db upgrade  
 gunicorn --bind 0.0.0.0:5000 --reload application:application
