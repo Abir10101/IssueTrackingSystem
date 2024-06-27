@@ -5,16 +5,20 @@ meta {
 }
 
 post {
-  url: http://localhost:5000/tickets
+  url: {{baseUrl}}/tickets
   body: json
   auth: none
 }
 
 headers {
   Content-Type: application/json
-  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODg1Mjc0NzYsImlhdCI6MTY4ODQ0MTA3Niwic3ViIjoidGVzdDEwIiwic2VjcmV0IjoiUFVyZmVyLU4tbEk1d1EiLCJleHBpcnkiOiIxNjg4NTA3Njc2In0.WszCc63OY4I8NJCN0dS3jwSkspgaGOE8fTUapJEOdzo
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTk1OTQ4NDYsImlhdCI6MTcxOTUwODQ0Niwic3ViIjoiYWJpcm1vdWxpY2s5OThAZ21haWwuY29tIiwic2VjcmV0IjoiYmc2LWZOTmdIakszRUEiLCJleHBpcnkiOiIxNzE5NTk0ODQ2In0.xqCHrmWMvhaoKTcOlXmOyu2kbfPTcLAC_mNwTmf9E0A
 }
 
 body:json {
-  { "code":"6666", "description": "wqq", "status":"pending" }
+  {
+    "code": "6656",
+    "description": "wqq",
+    "status": "pending"
+  }
 }
