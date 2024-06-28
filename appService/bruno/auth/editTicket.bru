@@ -1,0 +1,25 @@
+meta {
+  name: editTicket
+  type: http
+  seq: 8
+}
+
+patch {
+  url: http://localhost:5000/tickets
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTk2MjMzMjcsImlhdCI6MTcxOTUzNjkyNywic3ViIjoiYWJpcm1vdWxpY2s5OThAZ21haWwuY29tIiwic2VjcmV0IjoiczAtNXpLaXk0ZWtkMnciLCJleHBpcnkiOiIxNzE5NjIzMzI3In0.kVCSparlBV1NcJVksG9HU6MMGW73Gpjh9cIpEDnHk74
+}
+
+body:json {
+  {
+    "id": 2,
+    "code": 6676,
+    "description": "asdfa",
+    "status": "done"
+  }
+}
