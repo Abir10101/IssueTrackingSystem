@@ -95,8 +95,11 @@ def logout( token :str ) -> bool:
     decoded_token = decode_auth_token( token )
     user = User.get_user_by_email( decoded_token["email"] )
 
-    if not user or decoded_token["secret"] != user.u_secret:
+    if not user:
         raise UnauthorizationError("Invalid user")
+
+    if decoded_token["secret"] != user.u_secret:
+        raise UnauthorizationError("User not logged in.")
 
     user.refresh_secret()
     return True
@@ -110,8 +113,11 @@ def refresh_login_token( token: str ) -> dict:
 
     user = User.get_user_by_email( email )
 
-    if not user or token_secret != user.u_secret:
-        raise UnauthorizationError("Invalid user")
+    if not user:
+        raise UnauthorizationError("Invalid user.")
+
+    if token_secret != user.u_secret:
+        raise UnauthorizationError("User not logged in.")
 
     if (token_exp - datetime.datetime.utcnow()) < datetime.timedelta( seconds=BaseConfig.AUTH_TOKEN_REFRESH_RATE ):
         new_secret = user.refresh_secret()

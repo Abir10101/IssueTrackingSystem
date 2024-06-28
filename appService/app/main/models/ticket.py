@@ -21,8 +21,8 @@ class Ticket(db.Model):
 
 
     def validate(self):
-        self.t_code = self.t_code.strip()
-        self.t_description = self.t_description.strip()
+        self.t_code = str(self.t_code).strip()
+        self.t_description = str(self.t_description).strip()
 
         if not self.t_code:
             raise ValueError(f"InvalidCode")
@@ -44,8 +44,14 @@ class Ticket(db.Model):
 
         ticket = self.get_ticket_by_code(self.t_code)
 
-        if ticket:
-            raise ValueError("DuplicateCode")
+        if self.id is None:
+            # inserting a ticket
+            if ticket:
+                raise ValueError("DuplicateCode")
+        else:
+            # updating a ticket
+            if ticket.id != self.id:
+                raise ValueError("DuplicateCode")
 
         return self
 

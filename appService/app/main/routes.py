@@ -13,131 +13,145 @@ def health():
     return jsonify({"status": 200, "data": "App Running..."})
 
 
-@main_blueprint.route("/tickets", methods=["GET", "POST", "PATCH", "DELETE"])
+@main_blueprint.route("/tickets", methods=["POST"])
 @token_required
-def tickets(user_id, token):
-    if request.method == "POST":
-        request_data = request.get_json()
+def addTicket(user_id, token):
+    request_data = request.get_json()
 
-        if "code" not in request_data or \
-            "description" not in request_data or \
-            "status" not in request_data:
+    if "code" not in request_data or \
+        "description" not in request_data or \
+        "status" not in request_data:
+        response = {
+            "isOk": False,
+            "status": 400,
+            "message": "Invalid Parameters passed"
+        }
+
+    else:
+        code = request_data["code"]
+        description = request_data["description"]
+        status = request_data["status"]
+
+        try:
+            ticket_id = add_ticket(user_id, code, description, status)
+        except (ValidationError, DuplicationError) as err:
             response = {
                 "isOk": False,
                 "status": 400,
-                "message": "Invalid Parameters passed"
+                "message": f"{err}"
             }
-
         else:
-            code = request_data["code"]
-            description = request_data["description"]
-            status = request_data["status"]
-
-            try:
-                ticket_id = add_ticket(user_id, code, description, status)
-            except (ValidationError, DuplicationError) as err:
-                response = {
-                    "isOk": False,
-                    "status": 400,
-                    "message": f"{err}"
-                }
-            else:
-                response = {
-                    "isOk": True,
-                    "status": 200,
-                    "message": "Ticket added successfully",
-                    "data": {
-                        "ticket_id": ticket_id,
-                    }
-                }
-
-    elif request.method == "GET":
-        tickets = get_all_tickets(user_id)
-
-        if tickets:
             response = {
                 "isOk": True,
                 "status": 200,
-                "message": "Tickets fetched successfully",
+                "message": "Ticket added successfully",
                 "data": {
-                    "token": token,
-                    "tickets": tickets
+                    "ticket_id": ticket_id,
                 }
+            }
+
+    return jsonify(response), response["status"]
+
+
+@main_blueprint.route("/tickets", methods=["GET"])
+@token_required
+def getTickets(user_id, token):
+    tickets = get_all_tickets(user_id)
+
+    if tickets:
+        response = {
+            "isOk": True,
+            "status": 200,
+            "message": "Tickets fetched successfully",
+            "data": {
+                "token": token,
+                "tickets": tickets
+            }
+        }
+    else:
+        response = {
+            "isOk": True,
+            "status": 200,
+            "message": "No tickets found",
+        }
+
+    return jsonify(response), response["status"]
+
+
+@main_blueprint.route("/tickets", methods=["PATCH"])
+@token_required
+def editTicket(user_id, token):
+    request_data = request.get_json()
+
+    if "id" not in request_data or \
+        "code" not in request_data or \
+        "description" not in request_data or \
+        "status" not in request_data:
+        response = {
+            "isOk": False,
+            "status": 400,
+            "message": "Invalid parameters passed"
+        }
+
+    else:
+        id = request_data["id"]
+        code = request_data["code"]
+        description = request_data["description"]
+        status = request_data["status"]
+
+        try:
+            status = update_ticket(id, user_id, code, description, status)
+        except (ValidationError, DuplicationError) as err:
+            response = {
+                "isOk": False,
+                "status": 400,
+                "message": f"{err}"
             }
         else:
             response = {
                 "isOk": True,
                 "status": 200,
-                "message": "No tickets found",
+                "message": "Ticket updated successfully",
+                "data": {
+                    "token": token
+                }
             }
 
-    elif request.method == "PATCH":
-        request_data = request.get_json()
+    return jsonify(response), response["status"]
 
-        if "ticket_code" not in request_data or \
-            "new_code" not in request_data or \
-            "new_description" not in request_data or \
-            "new_status" not in request_data:
-            response = {
-                "isOk": False,
-                "status": 500,
-                "message": "Invalid parameters passed"
-            }
 
-        else:
-            ticket_code = request_data["ticket_code"]
-            new_code = request_data["new_code"]
-            new_description = request_data["new_description"]
-            new_status = request_data["new_status"]
+@main_blueprint.route("/tickets", methods=["DELETE"])
+@token_required
+def deleteTicket(user_id, token):
+    request_data = request.get_json()
 
-            try:
-                status = update_ticket(ticket_code, user_id, new_code, new_description, new_status)
-            except (ValidationError, DuplicationError) as err:
-                response = {
-                    "isOk": False,
-                    "status": 400,
-                    "message": f"{err}"
-                }
-            else:
-                response = {
-                    "isOk": True,
-                    "status": 200,
-                    "message": "Ticket updated successfully",
-                    "data": {
-                        "token": token
-                    }
-                }
+    if "code" not in request_data:
+        response = {
+            "isOk": False,
+            "status": 400,
+            "message": "Invalid parameters passed"
+        }
 
-    elif request.method == "DELETE":
-        request_data = request.get_json()
+    else:
+        code = request_data["code"]
 
-        if "code" not in request_data:
+        try:
+            status = delete_ticket(code, user_id)
+        except ValidationError as err:
             response = {
                 "isOk": False,
                 "status": 400,
-                "message": "Invalid parameters passed"
+                "message": f"{err}",
             }
-
         else:
-            code = request_data["code"]
-
-            try:
-                status = delete_ticket(code, user_id)
-            except ValidationError as err:
-                response = {
-                    "isOk": False,
-                    "status": 400,
-                    "message": f"{err}",
+            response = {
+                "isOk": True,
+                "status": 200,
+                "message": "Ticket deleted successfully",
+                "data": {
+                    "token": token
                 }
-            else:
-                response = {
-                    "isOk": True,
-                    "status": 200,
-                    "message": "Ticket deleted successfully",
-                    "data": {
-                        "token": token
-                    }
-                }
+            }
 
     return jsonify(response), response["status"]
 

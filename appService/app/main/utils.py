@@ -80,16 +80,16 @@ def get_single_ticket(ticket_code, user_id):
     return ticket_dict
 
 
-def update_ticket(old_code, user_id, new_code, new_description, new_status):
-    ticket = Ticket.get_ticket_by_code(old_code)
+def update_ticket(ticket_id, user_id, code, description, status):
+    ticket = Ticket.query.filter_by(id = ticket_id).first()
 
     if ticket is None or ticket.user_id != user_id:
         raise ValidationError("Invalid ticket")
 
     try:
-        ticket.t_code = new_code
-        ticket.t_description = new_description
-        ticket.t_status = new_status
+        ticket.t_code = code
+        ticket.t_description = description
+        ticket.t_status = status
         ticket.validate()
     except ValueError as err:
         err = f"{err}"
@@ -100,7 +100,7 @@ def update_ticket(old_code, user_id, new_code, new_description, new_status):
         elif err == "InvalidStatus":
             raise ValidationError(f"Invalid Ticket Status")
         elif err == "DuplicateCode":
-            raise DuplicationError(f"{ticket_number} already exists")
+            raise DuplicationError(f"{code} already exists")
 
     db.session.commit()
 

@@ -24,7 +24,7 @@ curl -w "%{http_code}\n" --location --request POST 'http://localhost:5000/users/
 
 curl -w "%{http_code}\n" --location --request GET 'http://localhost:5000/tickets' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODgwMTQ3MzIsImlhdCI6MTY4NzkyODMzMiwic3ViIjoidGVzdDEwIiwic2VjcmV0IjoibUZtOHpRanIwT3MwRFEiLCJleHBpcnkiOiIxNjg3OTk0OTMyIn0.MwBw7F0un00mNda1RPZo05IKA8vaC-AuOQqZQ0KFF_Q'
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTk2MjE2NjQsImlhdCI6MTcxOTUzNTI2NCwic3ViIjoiYWJpcm1vdWxpY2s5OThAZ21haWwuY29tIiwic2VjcmV0IjoiMEpJZmJVcHVyWElqT2ciLCJleHBpcnkiOiIxNzE5NjIxNjY0In0.cBONQ7wG4S8_-iHF8wsa9v40klykfTe01DVzaBaVjTU'
 
 
 curl -w "%{http_code}\n" --location --request GET 'http://localhost:5000/ticket/6666' \
@@ -34,7 +34,7 @@ curl -w "%{http_code}\n" --location --request GET 'http://localhost:5000/ticket/
 
 curl -w "%{http_code}\n" --location --request POST 'http://localhost:5000/tickets' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODg1Mjc0NzYsImlhdCI6MTY4ODQ0MTA3Niwic3ViIjoidGVzdDEwIiwic2VjcmV0IjoiUFVyZmVyLU4tbEk1d1EiLCJleHBpcnkiOiIxNjg4NTA3Njc2In0.WszCc63OY4I8NJCN0dS3jwSkspgaGOE8fTUapJEOdzo' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTk2MjE2NjQsImlhdCI6MTcxOTUzNTI2NCwic3ViIjoiYWJpcm1vdWxpY2s5OThAZ21haWwuY29tIiwic2VjcmV0IjoiMEpJZmJVcHVyWElqT2ciLCJleHBpcnkiOiIxNzE5NjIxNjY0In0.cBONQ7wG4S8_-iHF8wsa9v40klykfTe01DVzaBaVjTU' \
 --data-raw '{
     "code":"6666",
     "description": "wqq",

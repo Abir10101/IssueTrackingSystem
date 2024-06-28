@@ -2,7 +2,7 @@ from functools import wraps
 from flask import request
 from app.auth.utils import refresh_login_token
 from flask import current_app
-from app.auth.exc import TokenError
+from app.auth.exc import TokenError, UnauthorizationError
 
 
 def token_required(f):
@@ -19,7 +19,7 @@ def token_required(f):
                 "message": "Auth Token Required!"
             }
         
-        except TokenError as err:
+        except (TokenError, UnauthorizationError) as err:
             response = {
                 "isOk": False,
                 "status": 400,
