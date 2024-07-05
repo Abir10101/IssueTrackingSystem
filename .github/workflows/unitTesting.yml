@@ -1,0 +1,36 @@
+name: unitTesting
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 pytest
+        pip install -r requirements.txt
+    - name: install mysql
+      run: |
+        sudo service mysql stop
+        apt update && apt install -y docker
+        docker run --name db -e MYSQL_ROOT_PASSWORD=admin -e MYSQL_DATABASE=myapp -p 3306:3306 -v $PWD/database/:/docker-entrypoint-initdb.d -d mysql:8.0.31
+        sleep 30s
+    - name: test application
+      run: |
+        export DB_HOST=0.0.0.0
+        export DB_USER=root
+        export DB_PASSWORD=admin
+        export DB_NAME=myapp
+        export SECRET_KEY="secret_key"
+        python -m unittest Tests.test_auth
+        python -m unittest Tests.test_app
