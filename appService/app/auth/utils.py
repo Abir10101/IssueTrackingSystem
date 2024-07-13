@@ -75,7 +75,7 @@ def register( email :str, password :str, name :str ) -> str:
     queue = Queue()
     queue.push_message("UserRegistered", new_user.to_json())
 
-    return
+    return new_user
 
 
 def login( email :str, password :str ) -> str:
