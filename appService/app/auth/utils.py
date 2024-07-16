@@ -57,7 +57,7 @@ def register( email :str, password :str, name :str ) -> str:
         new_user.u_email = email
         new_user.hash_password( password )
         new_user.u_name = name
-        new_user.validate()
+        new_user.save()
     except ValueError as err:
         err = f"{err}"
         if err == "InvalidEmail":
@@ -69,13 +69,10 @@ def register( email :str, password :str, name :str ) -> str:
         elif err == "UserExists":
             raise DuplicationError("User already exists")
 
-    db.session.add(new_user)
-    db.session.commit()
-
     queue = Queue()
     queue.push_message("UserRegistered", new_user.to_json())
 
-    return
+    return new_user
 
 
 def login( email :str, password :str ) -> str:

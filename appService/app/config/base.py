@@ -10,6 +10,7 @@ class BaseConfig:
     DB_PORT = os.getenv('DB_PORT', default = '3306')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     DEBUG = False
+    TESTING = False
 
     # Other configuration
     SECRET_KEY = os.getenv('SECRET_KEY', default = "terrible secret key")

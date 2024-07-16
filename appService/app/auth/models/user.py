@@ -16,6 +16,12 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
 
 
+    def __init__(self):
+        self.u_email = ""
+        self.u_password = ""
+        self.u_name = ""
+
+
     def validate(self):
         self.u_email = self.u_email.strip()
         self.u_password = self.u_password.strip()
@@ -37,7 +43,12 @@ class User(db.Model):
         if not is_password_hashed:
             self.hash_password( self.u_password )
 
-        return self
+
+    def save(self):
+        self.validate()
+        db.session.add(self)
+        db.session.commit()
+        return True
 
 
     def hash_password(self, password):
@@ -62,9 +73,11 @@ class User(db.Model):
         db.session.commit()
         return self.u_secret
 
+
     def __is_valid_email(self):
         regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
         return re.fullmatch(regex, self.u_email)
+
 
     def to_json(self):
         return json.dumps({
