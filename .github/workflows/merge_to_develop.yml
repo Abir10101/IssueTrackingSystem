@@ -24,7 +24,7 @@ jobs:
 
       - name: Attempt Merge
         run: |
-          git merge --allow-unrelated-histories --no-ff ${{ github.event.after }} || true
+          git merge --allow-unrelated-histories --no-ff ${{ github.event.after }}
 
       - name: Resolve Merge Conflicts
         if: failure()
