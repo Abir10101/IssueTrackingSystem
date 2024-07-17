@@ -4,7 +4,7 @@ from .dev import DevelopmentConfig
 from .test import TestConfig
 
 
-class AppConfig:    
+class AppConfig:
     _instance = None
     _configs = None
     _environment = None
