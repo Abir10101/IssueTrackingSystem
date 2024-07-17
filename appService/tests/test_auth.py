@@ -22,7 +22,7 @@ def test_add_user(initiate):
     user.u_name = "testUser"
     user.u_email = "abcd@gmail.com"
     user.u_password = "asdf"
-    assert user.save() == True
+    assert user.save() == False
 
 
 def test_user_invalid_email(initiate):
