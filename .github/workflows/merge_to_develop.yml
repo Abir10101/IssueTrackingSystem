@@ -16,7 +16,7 @@ jobs:
         run: |
           git fetch origin develop
           git checkout develop
-          git merge --no-ff ${{ github.event.after }}
+          git merge --allow-unrelated-histories --no-ff ${{ github.event.after }}
 
       - name: Push Changes to Develop
         run: |
