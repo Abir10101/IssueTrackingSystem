@@ -17,12 +17,23 @@ jobs:
           git config --global user.email "abirmoulick998@gmail.com"
           git config --global user.name "github action" 
 
-      - name: Merge to Develop Branch
+      - name: Fetch and Checkout Develop Branch
         run: |
           git fetch origin develop
           git checkout develop
-          git config pull.rebase false
-          git pull origin main --allow-unrelated-histories
+
+      - name: Attempt Merge
+        run: |
+          git merge --allow-unrelated-histories --no-ff ${{ github.event.after }} || true
+
+      - name: Resolve Merge Conflicts
+        if: failure()
+        run: |
+          for file in $(git diff --name-only --diff-filter=U); do
+            git checkout --theirs "$file"
+            git add "$file"
+          done
+          git commit -m "Resolved merge conflicts by choosing develop branch changes"
 
       - name: Push Changes to Develop
         run: |
