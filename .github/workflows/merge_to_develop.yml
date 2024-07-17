@@ -21,7 +21,7 @@ jobs:
         run: |
           git fetch origin develop
           git checkout develop
-          git merge --allow-unrelated-histories --no-ff ${{ github.event.after }}
+          git pull origin main
 
       - name: Push Changes to Develop
         run: |
