@@ -21,6 +21,7 @@ jobs:
         run: |
           git fetch origin develop
           git checkout develop
+          git config pull.rebase false
           git pull origin main
 
       - name: Push Changes to Develop
