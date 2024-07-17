@@ -24,10 +24,9 @@ jobs:
 
       - name: Attempt Merge
         run: |
-          git merge --allow-unrelated-histories --no-ff ${{ github.event.after }}
+          git merge --allow-unrelated-histories --no-ff ${{ github.event.after }} || true
 
       - name: Resolve Merge Conflicts
-        if: failure()
         run: |
           for file in $(git diff --name-only --diff-filter=U); do
             git checkout --theirs "$file"
