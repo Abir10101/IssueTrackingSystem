@@ -17,6 +17,10 @@ jobs:
           git config --global user.email "abirmoulick998@gmail.com"
           git config --global user.name "github action"
 
+      - name: Print GitHub Event After
+        run: |
+          echo "GitHub Event After: ${{ github.event.after }}"
+
       - name: Merge to Develop Branch
         run: |
           git fetch origin develop
