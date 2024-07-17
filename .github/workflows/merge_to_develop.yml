@@ -26,13 +26,16 @@ jobs:
         run: |
           git merge --allow-unrelated-histories --no-ff ${{ github.event.after }} || true
 
-      - name: Resolve Merge Conflicts
+      - name: Resolve Merge Conflicts If Necessary
         run: |
-          for file in $(git diff --name-only --diff-filter=U); do
-            git checkout --theirs "$file"
-            git add "$file"
-          done
-          git commit -m "Resolved merge conflicts by choosing develop branch changes"
+          conflicted_files=$(git diff --name-only --diff-filter=U)
+          if [ -n "$conflicted_files" ]; then
+            for file in $conflicted_files; do
+              git checkout --theirs "$file"
+              git add "$file"
+            done
+            git commit -m "Resolved merge conflicts by choosing develop branch changes"
+          fi
 
       - name: Push Changes to Develop
         run: |
