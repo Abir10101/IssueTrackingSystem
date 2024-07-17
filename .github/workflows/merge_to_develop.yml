@@ -18,7 +18,8 @@ jobs:
           git config --global user.name "github action"
 
       - name: Print GitHub Event After
-        run: echo "GitHub Event After: ${{ github.event.after }}"
+        run: |
+          echo "GitHub Event After: ${{ github.event.after }}"
 
       - name: Merge to Develop Branch
         run: |
