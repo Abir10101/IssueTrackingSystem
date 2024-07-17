@@ -1,0 +1,23 @@
+name: Merge to Develop on Master Push
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  merge_to_develop:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Merge to Develop Branch
+        run: |
+          git fetch origin develop
+          git checkout develop
+          git merge --no-ff ${{ github.event.after }}
+
+      - name: Push Changes to Develop
+        run: |
+          git push origin develop
