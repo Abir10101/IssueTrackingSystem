@@ -34,7 +34,7 @@ jobs:
               git checkout --theirs "$file"
               git add "$file"
             done
-            git commit -m "Resolved merge conflicts by choosing develop branch changes"
+            git commit -m "Resolved merge conflicts by choosing main branch changes"
           fi
 
       - name: Push Changes to Develop
